@@ -1,8 +1,21 @@
 <template>
     <v-container>
-      <li v-for="(lab, index) of labList" :key="index">
-        {{lab}}
-      </li>
+      <v-card-title>
+        实验室列表
+      </v-card-title>
+      <v-data-table
+          :headers="headers"
+          :items="labList"
+          :page.sync="page"
+          :items-per-page="itemsPerPage"
+          hide-default-footer
+          class="elevation-1"
+          @page-count="pageCount = $event"
+          @click:row="clickTableRow"
+      ></v-data-table>
+      <div class="text-center pt-2">
+        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+      </div>
     </v-container>
 
 </template>
@@ -12,25 +25,48 @@ import axios from "axios";
 import * as config from "@/constants/config";
 import * as api from "@/constants/api";
 import qs from "qs";
+import * as RouterPath from "@/constants/router_path";
 
 export default {
   name: "list",
   data: () => ({
     labList: [],
+    headers: [
+      {
+        text: 'id',
+        align: 'start',
+        sortable: false,
+        value: 'id',
+      },
+      {
+        text: '实验室名称',
+        sortable: false,
+        value: 'lab_name',
+      }
+    ],
+    page: 1,
+    itemsPerPage: 20,
+    pageCount: 0,
   }),
   mounted() {
+    this.page = parseInt(this.$route.query.page)
     axios.post(
         config.BASE_BACKEND + api.LAB_LIST, qs.stringify({
-          page: 1,
+          page: this.page,
           pageSize: 20,
         })
     ).then(response => {
-      console.log(response.data['data'])
-      this.labList = response.data['data']
+      this.labList = response.data['data'].LabList
+      this.pageCount = response.data['data'].Count
     }).catch(err => {
       console.log(err)
     })
   },
+  methods: {
+    clickTableRow: function (value) {
+      this.$router.push({path: RouterPath.LAB_INFO, query: {labId: value.id}})
+    }
+  }
 }
 </script>
 
