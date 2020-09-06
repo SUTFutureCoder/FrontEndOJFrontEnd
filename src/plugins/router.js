@@ -6,6 +6,7 @@ import Login from "@/components/account/Login";
 import Register from "@/components/account/Register"
 
 import LabList from "@/components/lab/List"
+import LabInfo from "@/components/lab/Info"
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,10 @@ export default new VueRouter({
     {
       path: RouterPath.LAB_LIST,
       component: LabList,
+    },
+    {
+      path: RouterPath.LAB_INFO,
+      component: LabInfo,
     }
 
   ]
