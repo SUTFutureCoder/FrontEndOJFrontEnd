@@ -33,14 +33,18 @@
           </v-card-text>
 
           <v-card-actions>
+            <input id="zip-submit-file-upload" type="file" accept=".zip" style="display: none" @change="onFileChange"/>
             <v-btn
                 color="primary"
+                @click.native="openFileDialog"
             >
               上传zip包
             </v-btn>
 
             <v-btn
                 color="primary"
+                :loading="loading"
+                :disabled="loading"
                 @click="submitLab"
             >
               提交
@@ -65,7 +69,17 @@
             hide-default-footer
             class="elevation-1"
             style="overflow-y: auto; overflow-x: hidden; display: block;"
-        ></v-data-table>
+        >
+          <template v-slot:item.status="{ item }">
+            <v-chip text-color="white" :color="getStatusColor(item)">{{convertStatusId(item.status)}}</v-chip>
+          </template>
+          <template v-slot:item.create_time="{ item }">
+            {{convertTime(item.create_time)}}
+          </template>
+          <template v-slot:item.update_time="{ item }">
+            {{convertTime(item.update_time)}}
+          </template>
+        </v-data-table>
     </v-bottom-sheet>
     </v-container>
 </template>
@@ -74,6 +88,8 @@
 import axios from "axios";
 import * as config from "@/constants/config";
 import * as api from "@/constants/api";
+import * as LabSubmitUtils from "@/utils/LabSubmitUtils"
+import * as TimeUtils from "@/utils/TimeUtils"
 import qs from 'qs'
 
 export default {
@@ -82,7 +98,7 @@ export default {
     id: 0,
     LabInfo: {},
     submitIds: [],
-
+    formData: new FormData(),
     submitStatus: [],
     submitSheet: false,
     submitSheetTableHeaders: [
@@ -109,6 +125,9 @@ export default {
       }
     ],
     submitSubmitInterval: null,
+
+    loading: false,
+    loader: null,
   }),
   mounted() {
     this.id = parseInt(this.$route.query.labId)
@@ -138,6 +157,11 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+      this.loader = 'loading'
+      const l = this.loader
+      this[l] = !this[l]
+      setTimeout(() => (this[l] = false), 3000)
+      this.loader = null
     },
     showSubmitListTable() {
       this.initSubmitList()
@@ -158,24 +182,31 @@ export default {
           })
       ).then(response => {
         this.submitStatus = response.data['data']
-        // 重新渲染
-        for (let i in this.submitStatus) {
-          // status处理
-          switch (this.submitStatus[i].status) {
-            case 1:
-              this.submitStatus[i].status = "PENDING"
-              break;
-
-          }
-
-          // update处理
-          // let updateDate = new Date(this.submitStatus[i].update_time)
-          // this.submitStatus[i].update_time = this.submitStatus[i].update_time === 0 ? "-" : updateDate.getFullYear() + "-" + updateDate.getMonth() + ""
-        }
-        console.log(this.submitStatus)
       }).catch(err => {
         console.log(err)
       })
+    },
+    getStatusColor(item) {
+      return LabSubmitUtils.getStatusColor(item.status)
+    },
+    convertStatusId(status) {
+      return LabSubmitUtils.convertStatusId(status)
+    },
+    convertTime(time) {
+      return TimeUtils.convertMicroToDate(time)
+    },
+    openFileDialog() {
+      document.getElementById('zip-submit-file-upload').click()
+    },
+    onFileChange(e) {
+      let self = this;
+      let files = e.target.files || e.dataTransfer.files;
+
+      if(files.length > 0){
+        for(let i = 0; i< files.length; i++){
+          self.formData.append("file", files[i], files[i].name);
+        }
+      }
     }
 
   }
