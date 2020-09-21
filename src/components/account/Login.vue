@@ -49,7 +49,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="accent" @click="reg">注册</v-btn>
+            <v-btn color="success" @click="reg">注册</v-btn>
             <v-btn color="primary" @click="login">登录</v-btn>
           </v-card-actions>
         </v-card>

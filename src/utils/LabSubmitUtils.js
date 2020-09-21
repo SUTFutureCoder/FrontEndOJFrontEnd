@@ -42,8 +42,24 @@ export function getStatusColor(status) {
     return "primary"
   }
   if (status === 5) {
-    return "green"
+    return "success"
   }
-  return "red"
+  if (status === 6) {
+    return "warning"
+  }
+  return "error"
 
+}
+
+export function parseSubmitResult(strResult) {
+  let resultList = []
+  if (!strResult) {
+    return resultList
+  }
+  for (let resultItem of JSON.parse(strResult)) {
+    resultItem.statusName = convertStatusId(resultItem.Status)
+    resultItem.statusColor = getStatusColor(resultItem.Status)
+    resultList.push(resultItem)
+  }
+  return resultList
 }

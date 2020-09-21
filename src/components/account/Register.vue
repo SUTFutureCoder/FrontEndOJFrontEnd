@@ -57,7 +57,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-              <v-btn color="primary" @click="register">注册</v-btn>
+              <v-btn color="success" @click="register">注册</v-btn>
               <v-btn color="primary" @click="login">登录</v-btn>
           </v-card-actions>
         </v-card>

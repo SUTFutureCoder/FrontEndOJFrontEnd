@@ -3,6 +3,7 @@
     <v-row style="width: 100%">
 
       <v-col
+          v-if="showDesc"
           cols="6"
           class="flex-grow-1 flex-shrink-0"
       >
@@ -12,12 +13,13 @@
             absolute
             style="height: 100%; word-wrap:break-word; word-break:break-all; overflow: hidden;"
             v-html="this.LabInfo.lab_desc"
+            id="labinfo.lab_desc"
         >
         </v-card>
       </v-col>
 
       <v-col
-          cols="6"
+          :cols="editCols"
           class="flex-grow-0 flex-shrink-0"
       >
         <v-card
@@ -27,8 +29,8 @@
           <v-card-subtitle class="pb-0">提交代码</v-card-subtitle>
 
           <v-card-text class="text--primary">
-            <div>
-              <v-textarea outlined auto-grow v-model="this.LabInfo.lab_sample"></v-textarea>
+            <div >
+              <editor id="labinfo.editor" v-model="code" @init="editorInit" lang="html" theme="chrome" width="100%" :height="editorHeight" ></editor>
             </div>
           </v-card-text>
 
@@ -57,6 +59,14 @@
             >
               提交结果
             </v-btn>
+
+            <v-btn
+                color="primary"
+                @click="editorFullScreen"
+                right
+            >
+              全屏
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -71,7 +81,7 @@
             style="overflow-y: auto; overflow-x: hidden; display: block;"
         >
           <template v-slot:item.status="{ item }">
-            <v-chip text-color="white" :color="getStatusColor(item)">{{convertStatusId(item.status)}}</v-chip>
+              <v-btn :color="getStatusColor(item.status)" @click="showSubmitResult(item)">{{convertStatusId(item.status)}}</v-btn>
           </template>
           <template v-slot:item.create_time="{ item }">
             {{convertTime(item.create_time)}}
@@ -81,6 +91,8 @@
           </template>
         </v-data-table>
     </v-bottom-sheet>
+
+    <SubmitResult></SubmitResult>
     </v-container>
 </template>
 
@@ -91,12 +103,19 @@ import * as api from "@/constants/api";
 import * as LabSubmitUtils from "@/utils/LabSubmitUtils"
 import * as TimeUtils from "@/utils/TimeUtils"
 import qs from 'qs'
+import SubmitResult from "@/components/submit/SubmitResult";
+import EventBus from "@/assets/EventBus";
+import * as EventBusConst from "@/assets/EventBus"
 
 export default {
   name: "info",
   data: () => ({
     id: 0,
-    LabInfo: {},
+    editorHeight: window.innerHeight,
+    editCols: 6,
+    code: "",
+    LabInfo: {
+    },
     submitIds: [],
     formData: new FormData(),
     submitStatus: [],
@@ -128,7 +147,13 @@ export default {
 
     loading: false,
     loader: null,
+
+    showDesc: true,
   }),
+  components: {
+    SubmitResult,
+    editor: require('vue2-ace-editor'),
+  },
   mounted() {
     this.id = parseInt(this.$route.query.labId)
     axios.post(
@@ -138,9 +163,20 @@ export default {
     ).then(response => {
       this.LabInfo = response.data['data'].LabInfo
       this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
+      this.code = this.LabInfo.lab_sample
+
     }).catch(err => {
       console.log(err)
     })
+  },
+  watch: {
+    LabInfo() {
+      let vue = this
+      this.$nextTick(() => {
+        // change size of code area
+        vue.editorHeight = document.getElementById("labinfo.lab_desc").clientHeight + 'px'
+      });
+    }
   },
   methods: {
     submitLab() {
@@ -186,8 +222,8 @@ export default {
         console.log(err)
       })
     },
-    getStatusColor(item) {
-      return LabSubmitUtils.getStatusColor(item.status)
+    getStatusColor(status) {
+      return LabSubmitUtils.getStatusColor(status)
     },
     convertStatusId(status) {
       return LabSubmitUtils.convertStatusId(status)
@@ -198,6 +234,11 @@ export default {
     openFileDialog() {
       document.getElementById('zip-submit-file-upload').click()
     },
+    showSubmitResult(item) {
+      item.statusColor = this.getStatusColor(item.status)
+      item.statusName = this.convertStatusId(item.status)
+      EventBus.$emit(EventBusConst.SHOW_SUBMIT_RESULT_EVENT, item)
+    },
     onFileChange(e) {
       let self = this;
       let files = e.target.files || e.dataTransfer.files;
@@ -207,7 +248,19 @@ export default {
           self.formData.append("file", files[i], files[i].name);
         }
       }
-    }
+    },
+    editorInit: function () {
+      require('brace/ext/language_tools') //language extension prerequsite...
+      require('brace/mode/html')
+      require('brace/mode/javascript')    //language
+      require('brace/mode/less')
+      require('brace/theme/chrome')
+      require('brace/snippets/javascript') //snippet
+    },
+    editorFullScreen: function () {
+      this.showDesc = !this.showDesc
+      this.editCols = this.showDesc ? 6 : 12
+    },
 
   }
 }
