@@ -11,4 +11,8 @@ export const LAB_LIST = '/lab/list'
 export const LAB_INFO = '/lab/info'
 
 // 管理员功能
-export const ADMIN_LAB_ADD = '/admin/lab/add'
+// 添加实验室
+export const ADMIN_LAB_PUT = '/admin/lab/put'
+
+// 添加测试用例
+export const ADMIN_LAB_TESTCASE_PUT = '/admin/lab/testcase/put'

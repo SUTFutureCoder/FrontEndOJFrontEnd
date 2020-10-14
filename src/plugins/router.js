@@ -7,7 +7,8 @@ import Register from "@/components/account/Register"
 
 import LabList from "@/components/lab/List"
 import LabInfo from "@/components/lab/Info"
-import AddLab from "@/components/admin/AddLab";
+import PutLab from "@/components/admin/PutLab";
+import PutLabTestcase from "@/components/admin/PutLabTestcase";
 
 Vue.use(VueRouter)
 
@@ -36,8 +37,12 @@ export default new VueRouter({
 
     // 管理员
     {
-      path: RouterPath.ADMIN_LAB_ADD,
-      component: AddLab,
+      path: RouterPath.ADMIN_LAB_PUT,
+      component: PutLab,
+    },
+    {
+      path: RouterPath.ADMIN_LAB_TESTCASE_PUT,
+      component: PutLabTestcase,
     }
   ]
 })

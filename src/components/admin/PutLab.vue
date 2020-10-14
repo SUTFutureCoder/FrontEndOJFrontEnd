@@ -27,26 +27,28 @@
           @change="onEditorChange"
       />
 
-      <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【对外隐藏】</v-toolbar-title>
+      <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【用于试跑校验，对外隐藏】</v-toolbar-title>
       <editor v-model="lab_sample" @init="editorInit" lang="html" theme="chrome" width="100%" height="600px" ></editor>
 
-      <v-toolbar-title class="grey--text text--darken-4 ma-2">代码模板【对外显示】</v-toolbar-title>
+      <v-toolbar-title class="grey--text text--darken-4 ma-2">代码模板【用于辅助答题，对外显示】</v-toolbar-title>
       <editor v-model="lab_template" @init="editorInit" lang="html" theme="chrome" width="100%" height="600px" ></editor>
 
       <v-col>
         <v-btn
             class="ma-2"
             color="primary"
-            @click.native="tryRun"
+            @click.native="submit"
+            v-if="lab_id === 0"
         >
-          试跑
+          提交
         </v-btn>
         <v-btn
             class="ma-2"
             color="primary"
-            @click.native="submit"
+            @click.native="update"
+            v-if="lab_id !== 0"
         >
-          提交
+          更新
         </v-btn>
       </v-col>
 
@@ -72,6 +74,7 @@ import * as axios from "axios";
 import * as config from "@/constants/config";
 import * as api from "@/constants/api";
 import qs from "qs";
+import * as RouterPath from "@/constants/router_path";
 
 
 Quill.register('modules/ImageExtend', ImageExtend)
@@ -79,6 +82,8 @@ Quill.register('modules/ImageExtend', ImageExtend)
 export default {
   name: "AddLab",
   data: () => ({
+    lab_id: 0,
+
     lab_type: "",
     lab_type_maps: [
       {"name": "HTML", "type": 0,},
@@ -103,10 +108,10 @@ export default {
       modules: {
         ImageExtend: {
           loading: true,
-          name: 'img',
-          action: config.BASE_BACKEND + api.TOOL_UPLOAD_PIC,
+          name: 'file',
+          action: config.BASE_BACKEND + api.TOOL_UPLOAD_FILE,
           response: (res) => {
-            return config.BASE_BACKEND + api.TOOL_GET_PIC + "?pic=" + res.data
+            return config.BASE_BACKEND + api.TOOL_GET_FILE + "?file=" + res.data
           }
         },
         toolbar: {
@@ -140,21 +145,37 @@ export default {
       require('brace/theme/chrome')
       require('brace/snippets/javascript') //snippet
     },
-    tryRun: function () {
-
-    },
     submit: function () {
       axios.post(
           config.BASE_BACKEND + api.LAB_ADD, qs.stringify({
-            user_name: this.user_name,
-            user_password: this.user_password,
+            lab_name: this.lab_name,
+            lab_desc: this.lab_desc,
+            lab_sample: this.lab_sample,
+            lab_template: this.lab_template,
+            lab_type: this.lab_type,
           })
       ).then(response => {
-        console.log(response)
+        this.lab_id = response.data
       }).catch(err => {
         console.log(err)
       })
     },
+    update: function () {
+      axios.post(
+          config.BASE_BACKEND + api.LAB_UPDATE, qs.stringify({
+            lab_id: this.lab_id,
+            lab_name: this.lab_name,
+            lab_desc: this.lab_desc,
+            lab_sample: this.lab_sample,
+            lab_template: this.lab_template,
+            lab_type: this.lab_type,
+          })
+      ).then(response => {
+        response
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   },
   computed: {
     editor() {

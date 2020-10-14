@@ -183,7 +183,7 @@ export default {
       axios.post(
           config.BASE_BACKEND + api.LAB_SUBMIT, qs.stringify({
             lab_id: this.id,
-            submit_data: this.LabInfo.lab_sample,
+            submit_data: this.code,
           })
       ).then(response => {
         this.submitIds.push(response.data['data'])
