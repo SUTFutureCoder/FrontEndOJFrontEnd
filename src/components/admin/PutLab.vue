@@ -50,6 +50,14 @@
         >
           更新
         </v-btn>
+        <v-btn
+            class="ma-2"
+            color="primary"
+            @click.native="testcase"
+            v-if="lab_id !== 0"
+        >
+          编辑测试用例
+        </v-btn>
       </v-col>
 
     </v-form>
@@ -152,10 +160,10 @@ export default {
             lab_desc: this.lab_desc,
             lab_sample: this.lab_sample,
             lab_template: this.lab_template,
-            lab_type: this.lab_type,
+            lab_type: this.lab_type.type,
           })
       ).then(response => {
-        this.lab_id = response.data
+        this.lab_id = response.data.data
       }).catch(err => {
         console.log(err)
       })
@@ -175,6 +183,9 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    testcase: function () {
+      this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_PUT, query: {labId: this.lab_id}})
     }
   },
   computed: {

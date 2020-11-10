@@ -54,6 +54,9 @@
 <script>
 
 import hljs from "highlight.js";
+import * as axios from "axios";
+import * as config from "@/constants/config";
+import * as api from "@/constants/api";
 
 export default {
   name: "AddLabTestcase",
@@ -97,6 +100,33 @@ export default {
     submitTestCases: function () {
 
     },
+  },
+  mounted() {
+    this.lab_id = parseInt(this.$route.query.labId)
+    axios.post(
+        config.BASE_BACKEND + api.LAB_TESTCASE_LIST, {
+          lab_id: this.lab_id,
+        }
+    ).then(response => {
+      this.testcase_num = 0
+      this.testcases = []
+      for (let i in response.data.data) {
+        this.testcases.push({
+          testcase_desc: response.data.data[i].testcase_desc,
+          testcase_code: response.data.data[i].testcase_code,
+          input: response.data.data[i].input,
+          output: response.data.data[i].output,
+          time_limit: response.data.data[i].time_limit,
+          mem_limit: response.data.data[i].mem_limit,
+          wait_before: response.data.data[i].wait_before,
+        })
+        this.testcase_num++
+      }
+      console.log(response.data)
+      console.log(this.testcases)
+    }).catch(err => {
+      console.log(err)
+    })
   },
   components: {
     editor: require('vue2-ace-editor'),

@@ -12,6 +12,10 @@ export const LAB_LIST = "/lab/list"
 
 export const LAB_INFO = "/lab/info"
 
+export const LAB_TESTCASE_ADD = "/lab_testcase/add"
+
+export const LAB_TESTCASE_LIST = "/lab_testcase/list"
+
 export const LAB_SUBMIT = "/lab_submit/submit"
 
 export const LAB_SUBMIT_LIST_BY_LAB_ID = "/lab_submit/submit_list_by_lab_id"
