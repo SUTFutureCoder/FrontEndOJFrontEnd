@@ -1,3 +1,6 @@
+// 主页
+export const HOME = '/'
+
 // 登录
 export const LOGIN = '/login'
 

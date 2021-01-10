@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row style="width: 100%">
+    <v-row style="width: 100%" id="info-editor-row">
 
       <v-col
           v-if="showDesc"
@@ -11,9 +11,9 @@
             class="d-flex pa-1"
             outlined
             absolute
-            style="height: 100%; word-wrap:break-word; word-break:break-all; overflow: hidden;"
+            style="word-wrap:break-word; word-break:break-all;"
             v-html="this.LabInfo.lab_desc"
-            id="labinfo.lab_desc"
+            id="lab_desc-card"
         >
         </v-card>
       </v-col>
@@ -24,15 +24,13 @@
       >
         <v-card
             class="mx-auto"
+            id="edit-card"
             outlined
         >
           <v-card-subtitle class="pb-0">提交代码</v-card-subtitle>
 
-          <v-card-text class="text--primary">
-            <div >
-              <editor id="labinfo.editor" v-model="code" @init="editorInit" lang="html" theme="chrome" width="100%" :height="editorHeight" ></editor>
-            </div>
-          </v-card-text>
+          <MMonacoEditor v-model="code" mode="html" :syncInput=true
+                  theme="vs" :style="{ height: (editorHeight - 92) + 'px',  minHeight: (editorHeight - 92) + 'px', width: '100%'}" @init="initCode"/>
 
           <v-card-actions>
             <input id="zip-submit-file-upload" type="file" accept=".zip" style="display: none" @change="onFileChange"/>
@@ -60,13 +58,13 @@
               提交结果
             </v-btn>
 
-            <v-btn
-                color="primary"
-                @click="editorFullScreen"
-                right
-            >
-              全屏
-            </v-btn>
+<!--            <v-btn-->
+<!--                color="primary"-->
+<!--                @click="editorFullScreen"-->
+<!--                right-->
+<!--            >-->
+<!--              全屏-->
+<!--            </v-btn>-->
           </v-card-actions>
         </v-card>
       </v-col>
@@ -106,14 +104,16 @@ import qs from 'qs'
 import SubmitResult from "@/components/submit/SubmitResult";
 import EventBus from "@/assets/EventBus";
 import * as EventBusConst from "@/assets/EventBus"
+import MMonacoEditor from 'vue-m-monaco-editor'
 
 export default {
   name: "info",
   data: () => ({
     id: 0,
-    editorHeight: window.innerHeight,
+    editorHeight: document.body.clientHeight - 90,
     editCols: 6,
     code: "",
+    codeBuffer: "",
     LabInfo: {
     },
     submitIds: [],
@@ -152,33 +152,34 @@ export default {
   }),
   components: {
     SubmitResult,
-    editor: require('vue2-ace-editor'),
+    MMonacoEditor,
   },
   mounted() {
-    this.id = parseInt(this.$route.query.labId)
-    axios.post(
-        config.BASE_BACKEND + api.LAB_INFO, {
-          id: this.id,
-        }
-    ).then(response => {
-      this.LabInfo = response.data['data'].LabInfo
-      this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
-      this.code = this.LabInfo.lab_sample
-
-    }).catch(err => {
-      console.log(err)
-    })
-  },
-  watch: {
-    LabInfo() {
-      let vue = this
-      this.$nextTick(() => {
-        // change size of code area
-        vue.editorHeight = document.getElementById("labinfo.lab_desc").clientHeight + 'px'
-      });
-    }
+    this.loadLabInfo(false)
+    // document.getElementById("lab_desc-card").style.maxHeight = this.editorHeight + "px"
+    this.editorHeight = (document.body.clientHeight - 90)
+    // 设置大小
+    document.getElementById("lab_desc-card").style.maxHeight = this.editorHeight + "px"
+    document.getElementById("lab_desc-card").style.minHeight = this.editorHeight + "px"
   },
   methods: {
+    loadLabInfo(rewrite) {
+      this.id = parseInt(this.$route.query.labId)
+      axios.post(
+          config.BASE_BACKEND + api.LAB_INFO, {
+            id: this.id,
+          }
+      ).then(response => {
+        this.LabInfo = response.data['data'].LabInfo
+        this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
+        this.codeBuffer = this.LabInfo.lab_sample
+        if (rewrite) {
+          this.code = this.codeBuffer
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     submitLab() {
       axios.post(
           config.BASE_BACKEND + api.LAB_SUBMIT, qs.stringify({
@@ -198,6 +199,12 @@ export default {
       this[l] = !this[l]
       setTimeout(() => (this[l] = false), 3000)
       this.loader = null
+    },
+    initCode() {
+      if (this.codeBuffer === "") {
+        this.loadLabInfo(true)
+      }
+      this.code = this.codeBuffer
     },
     showSubmitListTable() {
       this.initSubmitList()
@@ -249,14 +256,6 @@ export default {
         }
       }
     },
-    editorInit: function () {
-      require('brace/ext/language_tools') //language extension prerequsite...
-      require('brace/mode/html')
-      require('brace/mode/javascript')    //language
-      require('brace/mode/less')
-      require('brace/theme/chrome')
-      require('brace/snippets/javascript') //snippet
-    },
     editorFullScreen: function () {
       this.showDesc = !this.showDesc
       this.editCols = this.showDesc ? 6 : 12
@@ -267,4 +266,18 @@ export default {
 </script>
 
 <style scoped>
+#lab_desc-card{
+  overflow: auto;
+  position: relative;
+}
+#edit-card {
+  height: 100%;
+  position: relative;
+  overflow: auto;
+}
+#info-editor-row {
+  display: flex;
+  height: 100%;
+}
+
 </style>

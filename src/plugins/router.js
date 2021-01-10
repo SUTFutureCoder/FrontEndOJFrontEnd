@@ -9,12 +9,18 @@ import LabList from "@/components/lab/List"
 import LabInfo from "@/components/lab/Info"
 import PutLab from "@/components/admin/PutLab";
 import PutLabTestcase from "@/components/admin/PutLabTestcase";
+import Home from "@/components/home/Home";
 
 Vue.use(VueRouter)
 
-export default new VueRouter({
+export const routerMap = {
   mode: 'history',
   routes: [
+    // 主页[测试版用于调试]
+    {
+      path: RouterPath.HOME,
+      component: Home,
+    },
     // 账号系统
     {
       path: RouterPath.REGISTER,
@@ -45,4 +51,6 @@ export default new VueRouter({
       component: PutLabTestcase,
     }
   ]
-})
+}
+
+export default new VueRouter(routerMap)
