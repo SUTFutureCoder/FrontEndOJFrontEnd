@@ -170,9 +170,9 @@ export default {
             id: this.id,
           }
       ).then(response => {
-        this.LabInfo = response.data['data'].LabInfo
+        this.LabInfo = response.data.data.LabInfo
         this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
-        this.codeBuffer = this.LabInfo.lab_sample
+        this.codeBuffer = this.LabInfo.lab_template
         if (rewrite) {
           this.code = this.codeBuffer
         }
@@ -187,7 +187,7 @@ export default {
             submit_data: this.code,
           })
       ).then(response => {
-        this.submitIds.push(response.data['data'])
+        this.submitIds.push(response.data.data)
         this.submitSheet = true
         this.showSubmitListTable()
         // this.LabInfo = response.data['data'].LabInfo
@@ -224,7 +224,9 @@ export default {
             lab_id: this.id,
           })
       ).then(response => {
-        this.submitStatus = response.data['data']
+        if (response.data.data != null && response.data.data.length > 0) {
+          this.submitStatus = response.data.data
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -236,6 +238,9 @@ export default {
       return LabSubmitUtils.convertStatusId(status)
     },
     convertTime(time) {
+      if (time === 0) {
+        return ""
+      }
       return TimeUtils.convertMicroToDate(time)
     },
     openFileDialog() {

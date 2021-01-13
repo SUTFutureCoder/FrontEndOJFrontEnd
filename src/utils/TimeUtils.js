@@ -1,11 +1,6 @@
 
 export function convertMicroToDate(microTime) {
-  let date = new Date(microTime)
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  let seconds = date.getSeconds();
-  return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds
+  return new Date(new Date(microTime).getTime() - new Date().getTimezoneOffset() * 60 * 1000).toISOString().
+    replace(/T/, ' ').      // replace T with a space
+    replace(/\..+/, '')     // delete the dot and everything after
 }

@@ -81,7 +81,7 @@ export default {
           config.BASE_BACKEND + api.LOGIN, qs.stringify({
             user_name: this.user_name,
             user_password: this.user_password,
-          })
+          }),
       ).then(() => {
         // console.log(response)
         // this.labList = response.data['data']
