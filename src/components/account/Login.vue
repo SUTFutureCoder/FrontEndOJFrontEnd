@@ -60,12 +60,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import qs from 'qs'
-import * as config from "@/constants/config";
-import * as api from "@/constants/api";
-import * as RouterPath from "@/constants/router_path";
-
+import * as RouterPath from "@/constants/router_path"
 
 export default {
   name: "Login",
@@ -77,20 +72,13 @@ export default {
   }),
   methods: {
     login() {
-      axios.post(
-          config.BASE_BACKEND + api.LOGIN, qs.stringify({
-            user_name: this.user_name,
-            user_password: this.user_password,
-          }),
-      ).then(() => {
-        // console.log(response)
-        // this.labList = response.data['data']
+      this.$api.user.login({
+        user_name: this.user_name,
+        user_password: this.user_password,
+      }).then(() => {
         this.login_failed = false
         this.$router.push({path: RouterPath.LAB_LIST,})
-      }).catch(() => {
-        // 登录失败
-        this.login_failed = true
-      })
+      }).catch(() => {})
     },
     reg() {
       this.$router.push({path: RouterPath.REGISTER,})

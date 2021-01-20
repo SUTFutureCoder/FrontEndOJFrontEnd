@@ -97,7 +97,7 @@
 <script>
 import axios from "axios";
 import * as config from "@/constants/config";
-import * as api from "@/constants/api";
+import * as api from "@/api/api_const";
 import * as LabSubmitUtils from "@/utils/LabSubmitUtils"
 import * as TimeUtils from "@/utils/TimeUtils"
 import qs from 'qs'
@@ -207,8 +207,8 @@ export default {
       this.code = this.codeBuffer
     },
     showSubmitListTable() {
-      this.initSubmitList()
       this.submitSheet = true
+      this.initSubmitList()
       if (this.submitSubmitInterval != null) {
         return
       }
@@ -219,6 +219,10 @@ export default {
 
     },
     initSubmitList() {
+      // 如果面板没有展开，则忽略
+      if (!this.submitSheet) {
+        return ;
+      }
       axios.post(
           config.BASE_BACKEND + api.LAB_SUBMIT_LIST_BY_LAB_ID, qs.stringify({
             lab_id: this.id,

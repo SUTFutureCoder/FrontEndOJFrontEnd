@@ -1,15 +1,16 @@
 import Vue from 'vue'
-import axios from 'axios'
 
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './plugins/router'
+import api from './api'
+import store from './store'
 
-Vue.config.productionTip = false
-axios.defaults.withCredentials = true
+Vue.prototype.$api = api
 
 new Vue({
   vuetify,
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

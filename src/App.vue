@@ -30,18 +30,22 @@
       <router-view></router-view>
     </v-main>
 
+    <!-- 全局snackbar -->
+    <MessageCenter/>
 
   </v-app>
 </template>
 
 <script>
 import * as RouterPath from '@/constants/router_path'
+import MessageCenter from "@/components/message/MessageCenter";
 
 export default {
   name: 'App',
 
   components: {
     // HelloWorld,
+    MessageCenter,
   },
 
   data: () => ({

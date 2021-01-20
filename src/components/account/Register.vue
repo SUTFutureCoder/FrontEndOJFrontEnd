@@ -71,7 +71,7 @@
 import axios from "axios";
 import qs from 'qs'
 import * as config from "@/constants/config";
-import * as api from "@/constants/api";
+import * as api from "@/api/api_const";
 
 export default {
   name: "Register",

@@ -80,7 +80,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import * as axios from "axios";
 import * as config from "@/constants/config";
-import * as api from "@/constants/api";
+import * as api from "@/api/api_const";
 import qs from "qs";
 import * as RouterPath from "@/constants/router_path";
 

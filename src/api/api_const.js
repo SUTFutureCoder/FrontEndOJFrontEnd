@@ -4,17 +4,9 @@ export const LOGIN = "/user/login"
 
 export const REG = "/user/reg"
 
-export const LAB_ADD = "/lab/add"
-
-export const LAB_UPDATE = "/lab/update"
-
 export const LAB_LIST = "/lab/list"
 
 export const LAB_INFO = "/lab/info"
-
-export const LAB_TESTCASE_ADD = "/lab_testcase/add"
-
-export const LAB_TESTCASE_LIST = "/lab_testcase/list"
 
 export const LAB_SUBMIT = "/lab_submit/submit"
 
@@ -25,3 +17,13 @@ export const TOOL_UPLOAD_FILE = "/tool/uploadfile"
 export const TOOL_GET_FILE = "/tool/getfile"
 
 export const JUDGER_TEST_RUN = "/judger/testrun"
+
+// 管理员
+
+export const LAB_ADD = "/admin/lab/add"
+
+export const LAB_UPDATE = "/admin/lab/update"
+
+export const LAB_TESTCASE_ADD = "/admin/lab_testcase/add"
+
+export const LAB_TESTCASE_LIST = "/admin/lab_testcase/list"

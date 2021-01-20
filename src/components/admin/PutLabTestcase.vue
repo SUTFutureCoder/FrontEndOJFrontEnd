@@ -56,7 +56,7 @@
 import hljs from "highlight.js";
 import * as axios from "axios";
 import * as config from "@/constants/config";
-import * as api from "@/constants/api";
+import * as api from "@/api/api_const";
 
 export default {
   name: "AddLabTestcase",
