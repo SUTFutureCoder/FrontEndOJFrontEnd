@@ -1,6 +1,6 @@
-import axios from "axios";
-import store from '@/store/index'
-import * as mutation from "@/store/mutation_const";
+import axios from "axios"
+import {store, storeConst} from '@/store'
+import * as config from "@/constants/config";
 
 let instance = axios.create({timeout:500, withCredentials: true})
 
@@ -24,29 +24,22 @@ instance.interceptors.response.use(
   }
 )
 
-
 const errorHandle = (status, data) => {
   // 状态码
   if (status === 200 && data.code === 200) {
     return
   }
   // 业务错误
-  store.commit(mutation.MODULE_MESSAGE + mutation.SNACKBAR_SHOW, {
-    text: data.msg,
+  store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+    text: (data.data !== undefined && data.data !== "") ? data.data : data.msg,
+    color: "error",
   })
-  switch (data.code) {
-    case 406:
-      alert("FUCK YOU")
-  }
-
-  // 网络错误
-  switch (status) {
-    case 400:
-      alert("test")
-  }
 }
 
+
 const request = (url, params) => {
+  // 统一新增后端
+  url = config.BASE_BACKEND + url
   return instance.post(url, params)
 }
 

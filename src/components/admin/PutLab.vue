@@ -28,10 +28,10 @@
       />
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【用于试跑校验，对外隐藏】</v-toolbar-title>
-      <editor v-model="lab_sample" @init="editorInit" lang="html" theme="chrome" width="100%" height="600px" ></editor>
+      <MMonacoEditor v-model="lab_sample" mode="html" :syncInput=true theme="vs" width="100%" height="600px"/>
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">代码模板【用于辅助答题，对外显示】</v-toolbar-title>
-      <editor v-model="lab_template" @init="editorInit" lang="html" theme="chrome" width="100%" height="600px" ></editor>
+      <MMonacoEditor v-model="lab_template" mode="html" :syncInput=true theme="vs" width="100%" height="600px"/>
 
       <v-col>
         <v-btn
@@ -66,22 +66,17 @@
 
 <script>
 import dedent from 'dedent'
-import hljs from 'highlight.js'
 import debounce from 'lodash/debounce'
 import { quillEditor, Quill } from 'vue-quill-editor'
 import { container, ImageExtend, QuillWatch } from 'quill-image-extend-module'
-
-
-// highlight.js style
-import 'highlight.js/styles/tomorrow.css'
+import MMonacoEditor from 'vue-m-monaco-editor'
 
 // import theme style
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
-import * as axios from "axios";
 import * as config from "@/constants/config";
 import * as api from "@/api/api_const";
-import qs from "qs";
+import {apiLab} from "@/api";
 import * as RouterPath from "@/constants/router_path";
 
 
@@ -130,55 +125,40 @@ export default {
             }
           }
         },
-        syntax: {
-          highlight: text => hljs.highlightAuto(text).value
-        },
       },
       placeholder: "实验室描述"
     },
   }),
   components: {
     quillEditor,
-    editor: require('vue2-ace-editor'),
+    MMonacoEditor,
   },
   methods: {
     onEditorChange: debounce(function(value) {
       this.content = value.html
     }, 466),
-    editorInit: function () {
-      require('brace/ext/language_tools') //language extension prerequsite...
-      require('brace/mode/html')
-      require('brace/mode/javascript')    //language
-      require('brace/mode/less')
-      require('brace/theme/chrome')
-      require('brace/snippets/javascript') //snippet
-    },
     submit: function () {
-      axios.post(
-          config.BASE_BACKEND + api.LAB_ADD, qs.stringify({
-            lab_name: this.lab_name,
-            lab_desc: this.lab_desc,
-            lab_sample: this.lab_sample,
-            lab_template: this.lab_template,
-            lab_type: this.lab_type.type,
-          })
-      ).then(response => {
+      apiLab.addLab({
+        lab_name: this.lab_name,
+        lab_desc: this.lab_desc,
+        lab_sample: this.lab_sample,
+        lab_template: this.lab_template,
+        lab_type: this.lab_type.type,
+      }).then(response => {
         this.lab_id = response.data.data
       }).catch(err => {
         console.log(err)
       })
     },
     update: function () {
-      axios.post(
-          config.BASE_BACKEND + api.LAB_UPDATE, qs.stringify({
-            lab_id: this.lab_id,
-            lab_name: this.lab_name,
-            lab_desc: this.lab_desc,
-            lab_sample: this.lab_sample,
-            lab_template: this.lab_template,
-            lab_type: this.lab_type,
-          })
-      ).then(response => {
+      apiLab.updateLab({
+        lab_id: this.lab_id,
+        lab_name: this.lab_name,
+        lab_desc: this.lab_desc,
+        lab_sample: this.lab_sample,
+        lab_template: this.lab_template,
+        lab_type: this.lab_type,
+      }).then(response => {
         response
       }).catch(err => {
         console.log(err)
@@ -186,14 +166,6 @@ export default {
     },
     testcase: function () {
       this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_PUT, query: {labId: this.lab_id}})
-    }
-  },
-  computed: {
-    editor() {
-      return this.$refs.myTextEditor.quill
-    },
-    contentCode() {
-      return hljs.highlightAuto(this.content).value
     }
   },
 }

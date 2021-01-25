@@ -9,7 +9,9 @@
       ></v-text-field>
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
-      <editor v-model="testcases[idx - 1].testcase_code" @init="editorInit" lang="javascript" theme="chrome" width="100%" height="200px" ></editor>
+
+      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="html" :syncInput=true
+                     theme="vs" width="100%" height="200px" />
 
       <v-row>
         <v-col cols="12" sm="4" md="4">
@@ -52,11 +54,8 @@
 </template>
 
 <script>
-
-import hljs from "highlight.js";
-import * as axios from "axios";
-import * as config from "@/constants/config";
-import * as api from "@/api/api_const";
+import {apiLab} from "@/api";
+import MMonacoEditor from 'vue-m-monaco-editor'
 
 export default {
   name: "AddLabTestcase",
@@ -86,14 +85,6 @@ export default {
       })
       this.testcase_num++
     },
-    editorInit: function () {
-      require('brace/ext/language_tools') //language extension prerequsite...
-      require('brace/mode/html')
-      require('brace/mode/javascript')    //language
-      require('brace/mode/less')
-      require('brace/theme/chrome')
-      require('brace/snippets/javascript') //snippet
-    },
     testRun: function (idx) {
       console.log(this.testcases[idx])
     },
@@ -103,11 +94,9 @@ export default {
   },
   mounted() {
     this.lab_id = parseInt(this.$route.query.labId)
-    axios.post(
-        config.BASE_BACKEND + api.LAB_TESTCASE_LIST, {
-          lab_id: this.lab_id,
-        }
-    ).then(response => {
+    apiLab.getLabTestList({
+      lab_id: this.lab_id,
+    }).then(response => {
       this.testcase_num = 0
       this.testcases = []
       for (let i in response.data.data) {
@@ -129,16 +118,8 @@ export default {
     })
   },
   components: {
-    editor: require('vue2-ace-editor'),
+    MMonacoEditor,
   },
-  computed: {
-    editor() {
-      return this.$refs.myTextEditor.quill
-    },
-    contentCode() {
-      return hljs.highlightAuto(this.content).value
-    }
-},
 }
 </script>
 

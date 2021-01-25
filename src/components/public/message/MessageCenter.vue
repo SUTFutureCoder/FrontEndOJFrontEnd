@@ -4,7 +4,7 @@
         :timeout=timeout
         :value=snackbar
         :color=color
-        absolute
+        :multi-line=true
     >
       {{text}}
     </v-snackbar>
@@ -21,7 +21,7 @@ export default {
     text: state => state.message.snackbar.text,
     timeout: state => state.message.snackbar.timeout,
     color: state => state.message.snackbar.color,
-  })
+  }),
 }
 </script>
 

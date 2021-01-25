@@ -68,10 +68,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import qs from 'qs'
-import * as config from "@/constants/config";
-import * as api from "@/api/api_const";
+import {apiUser} from '@/api'
 
 export default {
   name: "Register",
@@ -90,12 +87,10 @@ export default {
         this.user_password_confim = ""
         return
       }
-      axios.post(
-          config.BASE_BACKEND + api.REG, qs.stringify({
-            user_name: this.user_name,
-            user_password: this.user_password,
-          })
-      ).then(response => {
+      apiUser.register({
+        user_name: this.user_name,
+        user_password: this.user_password,
+      }).then(response => {
         console.log(response)
       }).catch(err => {
         console.log(err)

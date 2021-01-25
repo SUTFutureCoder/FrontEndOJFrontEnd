@@ -1,14 +1,9 @@
-import * as config from "@/constants/config";
 import * as api from "@/api/api_const";
 import * as base from "@/api/base";
 
-const user = {
+export const user = {
   // 登录
-  login(data) {
-    return base.request(
-      config.BASE_BACKEND + api.LOGIN, data,
-    )
-  }
+  login: (data) => base.request(api.LOGIN, data),
+  // 注册
+  register: (data) => base.request(api.REG, data),
 }
-
-export default user

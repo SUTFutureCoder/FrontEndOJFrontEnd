@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="dialog" width="600px">
+  <v-row justify="center" v-if="dialog !== undefined">
+    <v-dialog v-model="dialog" width="600px" @click:outside="close">
       <v-card>
         <v-card-title>
           <span class="headline"># {{submitItem.id}}</span>
@@ -38,29 +38,20 @@
 </template>
 
 <script>
-import EventBus from "@/assets/EventBus";
-import * as EventBusConst from "@/assets/EventBus"
-import * as LabSubmitUtils from "@/utils/LabSubmitUtils"
+import {mapState} from "vuex"
 
 export default {
   name: "submit_result",
-  data: () => ({
-    submitItem: {},
-    resultList: [],
-    dialog: false,
+  computed: mapState({
+    submitItem: state => state.submit_result.submit_result.submitItem,
+    resultList: state => state.submit_result.submit_result.resultList,
+    dialog: state => state.submit_result.submit_result.dialog,
   }),
   methods: {
-  },
-  mounted() {
-    let vue = this
-    EventBus.$on(EventBusConst.SHOW_SUBMIT_RESULT_EVENT, function (item) {
-      vue.submitItem = item
-      vue.dialog = true
-      vue.resultList = LabSubmitUtils.parseSubmitResult(item.submit_result)
-      console.log(vue.submitItem)
-    })
+    close: () => {
+      console.log("closed")
+    }
   }
-
 }
 </script>
 

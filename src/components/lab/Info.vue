@@ -95,15 +95,10 @@
 </template>
 
 <script>
-import axios from "axios";
-import * as config from "@/constants/config";
-import * as api from "@/api/api_const";
-import * as LabSubmitUtils from "@/utils/LabSubmitUtils"
-import * as TimeUtils from "@/utils/TimeUtils"
-import qs from 'qs'
+import {lab_submit_utils, time_utils} from "@/utils"
 import SubmitResult from "@/components/submit/SubmitResult";
-import EventBus from "@/assets/EventBus";
-import * as EventBusConst from "@/assets/EventBus"
+import {store, storeConst} from "@/store";
+import {apiLab, apiSubmit} from '@/api'
 import MMonacoEditor from 'vue-m-monaco-editor'
 
 export default {
@@ -165,28 +160,22 @@ export default {
   methods: {
     loadLabInfo(rewrite) {
       this.id = parseInt(this.$route.query.labId)
-      axios.post(
-          config.BASE_BACKEND + api.LAB_INFO, {
-            id: this.id,
-          }
-      ).then(response => {
+      apiLab.getLabInfo({
+        id: this.id,
+      }).then(response => {
         this.LabInfo = response.data.data.LabInfo
         this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
         this.codeBuffer = this.LabInfo.lab_template
         if (rewrite) {
           this.code = this.codeBuffer
         }
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch(() => {})
     },
     submitLab() {
-      axios.post(
-          config.BASE_BACKEND + api.LAB_SUBMIT, qs.stringify({
-            lab_id: this.id,
-            submit_data: this.code,
-          })
-      ).then(response => {
+      apiSubmit.submitLab({
+        lab_id: this.id,
+        submit_data: this.code,
+      }).then(response => {
         this.submitIds.push(response.data.data)
         this.submitSheet = true
         this.showSubmitListTable()
@@ -223,11 +212,9 @@ export default {
       if (!this.submitSheet) {
         return ;
       }
-      axios.post(
-          config.BASE_BACKEND + api.LAB_SUBMIT_LIST_BY_LAB_ID, qs.stringify({
-            lab_id: this.id,
-          })
-      ).then(response => {
+      apiSubmit.submitListByLabId({
+        lab_id: this.id,
+      }).then(response => {
         if (response.data.data != null && response.data.data.length > 0) {
           this.submitStatus = response.data.data
         }
@@ -236,16 +223,16 @@ export default {
       })
     },
     getStatusColor(status) {
-      return LabSubmitUtils.getStatusColor(status)
+      return lab_submit_utils.getStatusColor(status)
     },
     convertStatusId(status) {
-      return LabSubmitUtils.convertStatusId(status)
+      return lab_submit_utils.convertStatusId(status)
     },
     convertTime(time) {
       if (time === 0) {
         return ""
       }
-      return TimeUtils.convertMicroToDate(time)
+      return time_utils.convertMicroToDate(time)
     },
     openFileDialog() {
       document.getElementById('zip-submit-file-upload').click()
@@ -253,7 +240,8 @@ export default {
     showSubmitResult(item) {
       item.statusColor = this.getStatusColor(item.status)
       item.statusName = this.convertStatusId(item.status)
-      EventBus.$emit(EventBusConst.SHOW_SUBMIT_RESULT_EVENT, item)
+      item.resultList = lab_submit_utils.parseSubmitResult(item.submit_result)
+      store.dispatch(storeConst.DISPATCH_SUBMIT_RESULT_SHOW, item)
     },
     onFileChange(e) {
       let self = this;

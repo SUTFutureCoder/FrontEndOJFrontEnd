@@ -1,4 +1,4 @@
-import * as mutation from '@/store/mutation_const'
+import * as c from '@/store/const'
 
 const state = () => ({
   // 全局消息条
@@ -7,20 +7,28 @@ const state = () => ({
     snackbar: false,
     text: "",
     color: "primary",
-    timeout: "2000",
+    timeout: "3000",
   }
 })
 
 const getters = {}
 
-const actions = {}
+const actions = {
+  [c.ACTIONS_SNACKBAR_SHOW]: (context, payload) => {
+    context.commit(c.SNACKBAR_SHOW, payload)
+  }
+}
 
 const mutations = {
-  [mutation.SNACKBAR_SHOW](state, payload) {
+  [c.SNACKBAR_SHOW](state, payload) {
     state.snackbar.snackbar = true
     state.snackbar.text = payload.text !== undefined ? payload.text : ""
     state.snackbar.color = payload.color !== undefined ? payload.color : "primary"
-    state.snackbar.timeout = payload.timeout !== undefined ? payload.timeout : "2000"
+    state.snackbar.timeout = payload.timeout !== undefined ? payload.timeout : "3000"
+    // 附加取消
+    setTimeout(() => {
+      state.snackbar.snackbar = false
+    }, parseInt(state.snackbar.timeout, 10))
   },
 }
 

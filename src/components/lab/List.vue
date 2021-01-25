@@ -21,11 +21,8 @@
 </template>
 
 <script>
-import axios from "axios";
-import * as config from "@/constants/config";
-import * as api from "@/api/api_const";
-import qs from "qs";
 import * as RouterPath from "@/constants/router_path";
+import {apiLab} from "@/api";
 
 export default {
   name: "list",
@@ -50,12 +47,10 @@ export default {
   }),
   mounted() {
     this.page = parseInt(this.$route.query.page)
-    axios.post(
-        config.BASE_BACKEND + api.LAB_LIST, qs.stringify({
-          page: this.page,
-          pageSize: 20,
-        })
-    ).then(response => {
+    apiLab.getLabList({
+      page: this.page,
+      pageSize: 20,
+    }).then(response => {
       this.labList = response.data['data'].LabList
       this.pageCount = response.data['data'].Count
     }).catch(err => {
