@@ -4,6 +4,8 @@ export const LOGIN = "/user/login"
 
 export const REG = "/user/reg"
 
+export const WHOAMI = "/user/whoami"
+
 export const LAB_LIST = "/lab/list"
 
 export const LAB_INFO = "/lab/info"

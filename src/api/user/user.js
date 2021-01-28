@@ -6,4 +6,6 @@ export const user = {
   login: (data) => base.request(api.LOGIN, data),
   // 注册
   register: (data) => base.request(api.REG, data),
+  // get
+  whoami: (data) => base.request(api.WHOAMI, data),
 }

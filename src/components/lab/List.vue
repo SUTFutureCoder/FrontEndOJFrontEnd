@@ -14,7 +14,7 @@
           @click:row="clickTableRow"
       ></v-data-table>
       <div class="text-center pt-2">
-        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+        <v-pagination v-model="page" :length="pageCount" :total-visible="7" @click="clickPagination(num)"></v-pagination>
       </div>
     </v-container>
 
@@ -42,17 +42,18 @@ export default {
       }
     ],
     page: 1,
-    itemsPerPage: 20,
-    pageCount: 0,
+    itemsPerPage: 2,
+    pageCount: 1,
   }),
   mounted() {
-    this.page = parseInt(this.$route.query.page)
+    this.page = !isNaN(parseInt(this.$route.query.page)) ? parseInt(this.$route.query.page) : 1
     apiLab.getLabList({
       page: this.page,
-      pageSize: 20,
+      pageSize: this.itemsPerPage,
     }).then(response => {
-      this.labList = response.data['data'].LabList
-      this.pageCount = response.data['data'].Count
+      console.log(response)
+      this.labList = response.data.data.LabList
+      this.pageCount = response.data.data.Count
     }).catch(err => {
       console.log(err)
     })
@@ -60,6 +61,9 @@ export default {
   methods: {
     clickTableRow: function (value) {
       this.$router.push({path: RouterPath.LAB_INFO, query: {labId: value.id}})
+    },
+    clickPagination: function (value) {
+      console.log(value)
     }
   }
 }

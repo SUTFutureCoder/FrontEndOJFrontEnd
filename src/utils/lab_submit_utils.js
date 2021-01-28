@@ -47,7 +47,7 @@ export function getStatusColor(status) {
   if (status === 6) {
     return "warning"
   }
-  return "error"
+  return "#ff7979"
 
 }
 

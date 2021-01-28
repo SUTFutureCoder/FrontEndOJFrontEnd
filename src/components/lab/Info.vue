@@ -11,10 +11,10 @@
             class="d-flex pa-1"
             outlined
             absolute
-            style="word-wrap:break-word; word-break:break-all;"
-            v-html="this.LabInfo.lab_desc"
             id="lab_desc-card"
         >
+          <v-card-text v-html="LabInfo.lab_desc">
+          </v-card-text>
         </v-card>
       </v-col>
 
@@ -90,14 +90,13 @@
         </v-data-table>
     </v-bottom-sheet>
 
-    <SubmitResult></SubmitResult>
+    <SubmitResult :submit_result="submit_result"/>
     </v-container>
 </template>
 
 <script>
 import {lab_submit_utils, time_utils} from "@/utils"
 import SubmitResult from "@/components/submit/SubmitResult";
-import {store, storeConst} from "@/store";
 import {apiLab, apiSubmit} from '@/api'
 import MMonacoEditor from 'vue-m-monaco-editor'
 
@@ -144,6 +143,13 @@ export default {
     loader: null,
 
     showDesc: true,
+
+    submit_result: {
+      id: 0,
+      statusColor: "",
+      statusName: "",
+      resultList: [],
+    },
   }),
   components: {
     SubmitResult,
@@ -164,7 +170,7 @@ export default {
         id: this.id,
       }).then(response => {
         this.LabInfo = response.data.data.LabInfo
-        this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br />")
+        this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br /><br />")
         this.codeBuffer = this.LabInfo.lab_template
         if (rewrite) {
           this.code = this.codeBuffer
@@ -238,10 +244,12 @@ export default {
       document.getElementById('zip-submit-file-upload').click()
     },
     showSubmitResult(item) {
-      item.statusColor = this.getStatusColor(item.status)
-      item.statusName = this.convertStatusId(item.status)
-      item.resultList = lab_submit_utils.parseSubmitResult(item.submit_result)
-      store.dispatch(storeConst.DISPATCH_SUBMIT_RESULT_SHOW, item)
+      this.submit_result = {
+        id: item.id,
+        statusColor: this.getStatusColor(item.status),
+        statusName: this.convertStatusId(item.status),
+        resultList: lab_submit_utils.parseSubmitResult(item.submit_result),
+      }
     },
     onFileChange(e) {
       let self = this;
@@ -253,11 +261,6 @@ export default {
         }
       }
     },
-    editorFullScreen: function () {
-      this.showDesc = !this.showDesc
-      this.editCols = this.showDesc ? 6 : 12
-    },
-
   }
 }
 </script>
