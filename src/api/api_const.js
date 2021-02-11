@@ -26,6 +26,8 @@ export const LAB_ADD = "/admin/lab/add"
 
 export const LAB_UPDATE = "/admin/lab/update"
 
-export const LAB_TESTCASE_ADD = "/admin/lab_testcase/add"
+export const LAB_TESTCASE_SET = "/admin/lab_testcase/set"
 
 export const LAB_TESTCASE_LIST = "/admin/lab_testcase/list"
+
+export const LAB_TESTCASE_RUN = "/admin/lab_testcase/run"

@@ -1,3 +1,5 @@
+import * as color from "@/constants/color";
+
 export function convertStatusId(status) {
   switch (status) {
     case 1:
@@ -47,8 +49,7 @@ export function getStatusColor(status) {
   if (status === 6) {
     return "warning"
   }
-  return "#ff7979"
-
+  return color.RED
 }
 
 export function parseSubmitResult(strResult) {

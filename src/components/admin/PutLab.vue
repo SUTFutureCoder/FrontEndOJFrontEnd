@@ -52,7 +52,7 @@
         </v-btn>
         <v-btn
             class="ma-2"
-            color="primary"
+            :color="colors.GREEN"
             @click.native="testcase"
             v-if="lab_id !== 0"
         >
@@ -78,6 +78,8 @@ import * as config from "@/constants/config";
 import * as api from "@/api/api_const";
 import {apiLab} from "@/api";
 import * as RouterPath from "@/constants/router_path";
+import {store, storeConst} from "@/store";
+import * as colors from "@/constants/color";
 
 
 Quill.register('modules/ImageExtend', ImageExtend)
@@ -101,11 +103,13 @@ export default {
 
     lab_name: "",
     lab_desc: dedent`
-    <p><br></p><p><br></p><p><br></p><p><br></p><h2>Input</h2><p><br></p><p><br></p><p><br></p><h2>Output</h2><p><br></p><p><br></p><p><br></p><h2>Example</h2><h3>Input</h3><pre class="ql-syntax" spellcheck="false"><br/></pre><p><br></p><h3>Output</h3><pre class="ql-syntax" spellcheck="false"><br></pre><p><br></p><p><br></p><p><br></p><h2>Note</h2><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>
+    <br><br><br><br><p><h2>Input</h2></p><br><p><br></p><p><br></p><h2>Output</h2><p><br></p><p><br></p><p><br></p><h2>Example</h2><h3>Input</h3><pre class="ql-syntax" spellcheck="false"><br/></pre><p><br></p><h3>Output</h3><pre class="ql-syntax" spellcheck="false"><br></pre><p><br></p><p><br></p><p><br></p><h2>Note</h2><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>
     `,
 
     lab_sample: "",
     lab_template: "",
+
+    colors: colors,
 
     editorOption: {
       modules: {
@@ -115,6 +119,9 @@ export default {
           action: config.BASE_BACKEND + api.TOOL_UPLOAD_FILE,
           response: (res) => {
             return config.BASE_BACKEND + api.TOOL_GET_FILE + "?file=" + res.data
+          },
+          headers: (xhr) => {
+            xhr.withCredentials = true
           }
         },
         toolbar: {
@@ -146,6 +153,10 @@ export default {
         lab_type: this.lab_type.type,
       }).then(response => {
         this.lab_id = response.data.data
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "创建成功，请继续创建测试用例",
+          color: colors.GREEN,
+        })
       }).catch(err => {
         console.log(err)
       })

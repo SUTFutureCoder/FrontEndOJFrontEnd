@@ -14,4 +14,8 @@ export const lab = {
 
   // 实验室测试用例
   getLabTestList: (data) => base.request(api.LAB_TESTCASE_LIST, data),
+  // 实验室测试用例运行测试
+  runLabTestcase: (data) => base.requestNoTimeout(api.LAB_TESTCASE_RUN, data),
+  // 添加实验室测试用例
+  setLabTestcase: (data) => base.requestNoTimeout(api.LAB_TESTCASE_SET, data),
 }

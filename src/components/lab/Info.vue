@@ -7,15 +7,15 @@
           cols="6"
           class="flex-grow-1 flex-shrink-0"
       >
-        <v-card
-            class="d-flex pa-1"
-            outlined
-            absolute
-            id="lab_desc-card"
-        >
-          <v-card-text v-html="LabInfo.lab_desc">
-          </v-card-text>
-        </v-card>
+<!--        <v-card-->
+<!--            -->
+<!--            outlined-->
+<!--            absolute-->
+<!--            -->
+<!--        >-->
+          <div id="lab_desc-card" v-html="LabInfo.lab_desc">
+          </div>
+<!--        </v-card>-->
       </v-col>
 
       <v-col
@@ -268,6 +268,7 @@ export default {
 <style scoped>
 #lab_desc-card{
   overflow: auto;
+  height: 40%;
   position: relative;
 }
 #edit-card {

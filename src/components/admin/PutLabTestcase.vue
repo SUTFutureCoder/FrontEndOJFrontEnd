@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="mt-2" v-for="idx in testcase_num" :key="idx">
-      <a>第{{idx}}个测试用例</a>
+      <a>第{{idx}}个测试用例</a> <v-divider vertical/><v-btn color="warning" @click="deleteTestcase(idx - 1)">删除用例</v-btn>
       <v-text-field
           v-model="testcases[idx - 1].testcase_desc"
           label="测试用例说明"
@@ -10,7 +10,7 @@
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
 
-      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="html" :syncInput=true
+      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :syncInput=true
                      theme="vs" width="100%" height="200px" />
 
       <v-row>
@@ -49,6 +49,7 @@
       <v-btn block color="success" @click="testRun(idx - 1)">运行测试用例</v-btn>
     </div>
     <v-btn class="mt-4 mb-4" block color="primary" @click="addTestCase">添加测试用例</v-btn>
+    <v-divider/>
     <v-btn class="mt-4 mb-4" block color="success" @click="submitTestCases">提交</v-btn>
   </v-container>
 </template>
@@ -85,11 +86,22 @@ export default {
       })
       this.testcase_num++
     },
+    deleteTestcase: function (idx) {
+      this.testcases.splice(idx, 1)
+      this.testcase_num--
+    },
     testRun: function (idx) {
-      console.log(this.testcases[idx])
+      let testcase = {}
+      testcase.lab_id = this.lab_id
+      testcase.lab_testcase = this.testcases[idx]
+      apiLab.runLabTestcase(testcase).then(response => {
+        this.testcases[idx].output = response.data.data.SubmitOutput
+      }).catch()
     },
     submitTestCases: function () {
-
+      apiLab.setLabTestcase({"lab_id": this.lab_id, "testcases":this.testcases}).then(response => {
+        console.log(response)
+      }).catch()
     },
   },
   mounted() {

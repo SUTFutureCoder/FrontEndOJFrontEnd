@@ -61,6 +61,7 @@
 
 <script>
 import * as RouterPath from "@/constants/router_path"
+import {apiUser} from "@/api";
 
 export default {
   name: "Login",
@@ -72,7 +73,7 @@ export default {
   }),
   methods: {
     login() {
-      this.$api.user.login({
+      apiUser.login({
         user_name: this.user_name,
         user_password: this.user_password,
       }).then(() => {
