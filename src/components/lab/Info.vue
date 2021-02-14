@@ -169,7 +169,7 @@ export default {
       apiLab.getLabInfo({
         id: this.id,
       }).then(response => {
-        this.LabInfo = response.data.data.LabInfo
+        this.LabInfo = response.data.data.lab_info
         this.LabInfo.lab_desc = this.LabInfo.lab_desc.replace(/\n/g, "<br /><br />")
         this.codeBuffer = this.LabInfo.lab_template
         if (rewrite) {

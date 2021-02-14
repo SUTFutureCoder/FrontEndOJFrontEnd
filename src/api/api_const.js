@@ -21,6 +21,7 @@ export const TOOL_GET_FILE = "/tool/getfile"
 export const JUDGER_TEST_RUN = "/judger/testrun"
 
 // 管理员
+export const LAB_SUMMARY_LIST = "/admin/lab/list"
 
 export const LAB_ADD = "/admin/lab/add"
 
@@ -31,3 +32,9 @@ export const LAB_TESTCASE_SET = "/admin/lab_testcase/set"
 export const LAB_TESTCASE_LIST = "/admin/lab_testcase/list"
 
 export const LAB_TESTCASE_RUN = "/admin/lab_testcase/run"
+
+export const LAB_ENABLE = "/admin/lab/enable"
+
+export const LAB_DISABLE = "/admin/lab/disable"
+
+export const LAB_CONSTRUCTING = "/admin/lab/constructing"

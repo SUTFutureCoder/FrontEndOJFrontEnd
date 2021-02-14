@@ -2,14 +2,16 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as RouterPath from '@/constants/router_path'
 
-import Login from "@/components/account/Login";
+import Home from "@/components/home/Home"
+
+import Login from "@/components/account/Login"
 import Register from "@/components/account/Register"
 
-import LabList from "@/components/lab/List"
+import LabList from "@/components/public/lab/LabList"
 import LabInfo from "@/components/lab/Info"
-import PutLab from "@/components/admin/PutLab";
-import PutLabTestcase from "@/components/admin/PutLabTestcase";
-import Home from "@/components/home/Home";
+import AdminPutLab from "@/components/admin/PutLab"
+import AdminPutLabTestcase from "@/components/admin/PutLabTestcase";
+
 
 Vue.use(VueRouter)
 
@@ -44,11 +46,11 @@ export const routerMap = {
     // 管理员
     {
       path: RouterPath.ADMIN_LAB_PUT,
-      component: PutLab,
+      component: AdminPutLab,
     },
     {
       path: RouterPath.ADMIN_LAB_TESTCASE_PUT,
-      component: PutLabTestcase,
+      component: AdminPutLabTestcase,
     }
   ]
 }

@@ -28,10 +28,10 @@
       />
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【用于试跑校验，对外隐藏】</v-toolbar-title>
-      <MMonacoEditor v-model="lab_sample" mode="html" :syncInput=true theme="vs" width="100%" height="600px"/>
+      <MMonacoEditor v-model="lab_sample" mode="html" :syncInput=true theme="vs" width="100%" height="600px" @init="initSample"/>
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">代码模板【用于辅助答题，对外显示】</v-toolbar-title>
-      <MMonacoEditor v-model="lab_template" mode="html" :syncInput=true theme="vs" width="100%" height="600px"/>
+      <MMonacoEditor v-model="lab_template" mode="html" :syncInput=true theme="vs" width="100%" height="600px" @init="initTemplate"/>
 
       <v-col>
         <v-btn
@@ -56,7 +56,7 @@
             @click.native="testcase"
             v-if="lab_id !== 0"
         >
-          编辑测试用例
+          下线实验室并编辑测试用例
         </v-btn>
       </v-col>
 
@@ -107,7 +107,9 @@ export default {
     `,
 
     lab_sample: "",
+    lab_sample_buffer: "",
     lab_template: "",
+    lab_template_buffer: "",
 
     colors: colors,
 
@@ -176,9 +178,32 @@ export default {
       })
     },
     testcase: function () {
-      this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_PUT, query: {labId: this.lab_id}})
-    }
+      // 变更实验室为建造中
+      apiLab.constructingLab({"lab_id": this.lab_id,}).then((data) => {
+        data
+        this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_PUT, query: {labId: this.lab_id}})
+      }).catch()
+
+    },
+    initSample: function () {
+      this.lab_sample = this.lab_sample_buffer
+    },
+    initTemplate: function () {
+      this.lab_template = this.lab_template_buffer
+    },
   },
+  mounted() {
+    this.lab_id = !isNaN(parseInt(this.$route.query.labId)) ? parseInt(this.$route.query.labId) : 0
+    if (this.lab_id !== 0) {
+      apiLab.getLabInfo({id: this.lab_id}).then((item) => {
+        this.lab_type = item.data.data.LabInfo.lab_type
+        this.lab_name = item.data.data.LabInfo.lab_name
+        this.lab_desc = item.data.data.LabInfo.lab_desc
+        this.lab_sample_buffer = item.data.data.LabInfo.lab_sample
+        this.lab_template_buffer = item.data.data.LabInfo.lab_template
+      }).catch()
+    }
+  }
 }
 </script>
 

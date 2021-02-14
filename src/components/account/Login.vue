@@ -78,7 +78,7 @@ export default {
         user_password: this.user_password,
       }).then(() => {
         this.login_failed = false
-        this.$router.push({path: RouterPath.LAB_LIST,})
+        this.$router.push({path: RouterPath.LAB_LIST})
       }).catch(() => {})
     },
     reg() {

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="mt-2" v-for="idx in testcase_num" :key="idx">
-      <a>第{{idx}}个测试用例</a> <v-divider vertical/><v-btn color="warning" @click="deleteTestcase(idx - 1)">删除用例</v-btn>
+      <a>第{{idx}}个测试用例</a><v-spacer></v-spacer><v-btn color="warning" @click="deleteTestcase(idx - 1)">删除用例</v-btn>
       <v-text-field
           v-model="testcases[idx - 1].testcase_desc"
           label="测试用例说明"
@@ -11,7 +11,7 @@
       <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
 
       <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :syncInput=true
-                     theme="vs" width="100%" height="200px" />
+                     theme="vs" width="100%" height="200px" @init="initTestcaseCode(idx - 1)" />
 
       <v-row>
         <v-col cols="12" sm="4" md="4">
@@ -50,13 +50,19 @@
     </div>
     <v-btn class="mt-4 mb-4" block color="primary" @click="addTestCase">添加测试用例</v-btn>
     <v-divider/>
-    <v-btn class="mt-4 mb-4" block color="success" @click="submitTestCases">提交</v-btn>
+    <v-col cols="12">
+      <v-col cols="6" class="d-inline-flex"><v-btn class="mt-4 mb-4" block color="success" @click="submitTestCases">保存</v-btn></v-col>
+      <v-col cols="6" class="d-inline-flex"><v-btn class="mt-4 mb-4" block color="success" @click="saveAndEnableLab">保存并上线实验室</v-btn></v-col>
+    </v-col>
   </v-container>
 </template>
 
 <script>
 import {apiLab} from "@/api";
 import MMonacoEditor from 'vue-m-monaco-editor'
+import {store, storeConst} from "@/store";
+import * as colors from "@/constants/color";
+import * as RouterPath from "@/constants/router_path";
 
 export default {
   name: "AddLabTestcase",
@@ -66,6 +72,7 @@ export default {
     testcases: [{
       testcase_desc: "",
       testcase_code: "",
+      testcase_code_buffer: "",
       input: "",
       output: "",
       time_limit: 0,
@@ -78,6 +85,7 @@ export default {
       this.testcases.push({
         testcase_desc: "",
         testcase_code: "",
+        testcase_code_buffer: "",
         input: "",
         output: "",
         time_limit: 0,
@@ -99,10 +107,28 @@ export default {
       }).catch()
     },
     submitTestCases: function () {
-      apiLab.setLabTestcase({"lab_id": this.lab_id, "testcases":this.testcases}).then(response => {
-        console.log(response)
+      apiLab.setLabTestcase({"lab_id": this.lab_id, "testcases":this.testcases}).then(() => {
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "创建成功，请手动上线实验室",
+          color: colors.GREEN,
+        })
       }).catch()
     },
+    saveAndEnableLab: function () {
+      apiLab.setLabTestcase({"lab_id": this.lab_id, "testcases":this.testcases}).then(() => {
+        apiLab.enableLab({"lab_id": this.lab_id,}).then(() => {
+          // 没问题就发消息&跳回到管理列表
+          store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+            text: "上线实验室成功",
+            color: colors.GREEN,
+          })
+          this.$router.push({path: RouterPath.ADMIN_LAB_LIST,})
+        }).catch()
+      }).catch()
+    },
+    initTestcaseCode: function (id) {
+      this.testcases[id].testcase_code = this.testcases[id].testcase_code_buffer
+    }
   },
   mounted() {
     this.lab_id = parseInt(this.$route.query.labId)
@@ -114,7 +140,8 @@ export default {
       for (let i in response.data.data) {
         this.testcases.push({
           testcase_desc: response.data.data[i].testcase_desc,
-          testcase_code: response.data.data[i].testcase_code,
+          testcase_code: "",
+          testcase_code_buffer: response.data.data[i].testcase_code,
           input: response.data.data[i].input,
           output: response.data.data[i].output,
           time_limit: response.data.data[i].time_limit,
@@ -123,8 +150,6 @@ export default {
         })
         this.testcase_num++
       }
-      console.log(response.data)
-      console.log(this.testcases)
     }).catch(err => {
       console.log(err)
     })
