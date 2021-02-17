@@ -16,7 +16,7 @@
         ></v-text-field>
       </v-col>
       <v-col cols="4" v-if="adminMode">
-        <v-btn block class="primary" @click="putlab">创建实验室</v-btn>
+        <v-btn block x-large class="primary" @click="putLab">创建实验室</v-btn>
       </v-col>
     </v-row>
     <v-data-table
@@ -54,10 +54,10 @@
                 v-bind="attrs"
                 v-on="on"
             >
-              mdi-delete
+              mdi-test-tube-off
             </v-icon>
           </template>
-          <span>下线</span>
+          <span>禁用</span>
         </v-tooltip>
 
 
@@ -70,10 +70,10 @@
                 v-bind="attrs"
                 v-on="on"
             >
-              mdi-chevron-triple-up
+              mdi-test-tube
             </v-icon>
           </template>
-          <span>上线</span>
+          <span>可用</span>
         </v-tooltip>
       </template>
 
@@ -156,11 +156,11 @@ export default {
   }),
   mounted() {
     this.page = !isNaN(parseInt(this.$route.query.page)) ? parseInt(this.$route.query.page) : 1
-    this.adminMode = this.$route.query.adminMode ? this.$route.query.page : false
+    this.adminMode = this.$route.query.adminMode ? this.$route.query.adminMode : false
     this.getLabListByPage(this.page, this.itemsPerPage)
   },
   methods: {
-    putlab() {
+    putLab() {
       this.$router.push({path: RouterPath.ADMIN_LAB_PUT})
     },
     editLab(item) {

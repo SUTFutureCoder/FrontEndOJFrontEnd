@@ -13,37 +13,24 @@
 
 <script>
 import {mapState} from 'vuex'
+import {store, storeConst} from "@/store";
 
 export default {
   name: "MessageCenter",
   data: () => ({
-    ws: null,
   }),
   computed: mapState({
     snackbar: state => state.message.snackbar.snackbar,
     text: state => state.message.snackbar.text,
     timeout: state => state.message.snackbar.timeout,
     color: state => state.message.snackbar.color,
+    ws: state => state.message.ws,
   }),
   mounted() {
-    this.initWs()
+    store.dispatch(storeConst.DISPATCH_WS_CONN)
   },
   methods: {
-    initWs() {
-      this.ws = new WebSocket('ws://localhost:8086/ws'),
-          this.ws.onopen = () => {
-            console.log('connection open')
-          }
-      this.ws.onmessage = (evt) => {
-        console.log(evt)
-      }
-      this.ws.onclose = () => {
-        console.log('connection close')
-      }
-    }
   }
-
-
 }
 </script>
 

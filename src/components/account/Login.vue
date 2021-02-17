@@ -62,6 +62,7 @@
 <script>
 import * as RouterPath from "@/constants/router_path"
 import {apiUser} from "@/api";
+import {store, storeConst} from "@/store";
 
 export default {
   name: "Login",
@@ -73,12 +74,20 @@ export default {
   }),
   methods: {
     login() {
+      let vue = this
       apiUser.login({
         user_name: this.user_name,
         user_password: this.user_password,
-      }).then(() => {
+      }).then((response) => {
         this.login_failed = false
-        this.$router.push({path: RouterPath.LAB_LIST})
+        vue.$router.push({path: RouterPath.LAB_LIST})
+        // reinit websocket
+        store.dispatch(storeConst.DISPATCH_WS_CONN)
+        store.dispatch(storeConst.DISPATCH_SET_USER_INFO, {
+          id: response.data.data.id,
+          name: response.data.data.creator,
+          user_type: response.data.data.user_type,
+        })
       }).catch(() => {})
     },
     reg() {

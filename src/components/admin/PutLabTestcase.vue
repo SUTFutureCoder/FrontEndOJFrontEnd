@@ -122,7 +122,7 @@ export default {
             text: "上线实验室成功",
             color: colors.GREEN,
           })
-          this.$router.push({path: RouterPath.ADMIN_LAB_LIST,})
+          this.$router.push({path: RouterPath.LAB_LIST, query:{adminMode:true}})
         }).catch()
       }).catch()
     },

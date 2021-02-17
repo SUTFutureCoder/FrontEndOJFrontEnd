@@ -7,6 +7,9 @@ export const LOGIN = '/login'
 // 注册
 export const REGISTER = '/reg'
 
+// 用户详情
+export const INFO ='/info'
+
 // 实验室列表
 export const LAB_LIST = '/lab/list'
 
@@ -19,3 +22,7 @@ export const ADMIN_LAB_PUT = '/admin/lab/put'
 
 // 添加测试用例
 export const ADMIN_LAB_TESTCASE_PUT = '/admin/lab/testcase/put'
+
+export const ADMIN_USER_LIST = "/admin/user/list"
+
+export const ADMIN_LAB_LIST = "/admin/lab/list"

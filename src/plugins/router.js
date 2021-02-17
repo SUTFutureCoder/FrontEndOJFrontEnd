@@ -6,11 +6,13 @@ import Home from "@/components/home/Home"
 
 import Login from "@/components/account/Login"
 import Register from "@/components/account/Register"
+import Info from "@/components/account/Info"
 
 import LabList from "@/components/public/lab/LabList"
 import LabInfo from "@/components/lab/Info"
 import AdminPutLab from "@/components/admin/PutLab"
 import AdminPutLabTestcase from "@/components/admin/PutLabTestcase";
+import UserList from "@/components/admin/UserList";
 
 
 Vue.use(VueRouter)
@@ -32,6 +34,10 @@ export const routerMap = {
       path: RouterPath.LOGIN,
       component: Login,
     },
+    {
+      path: RouterPath.INFO,
+      component: Info,
+    },
 
     // 实验室
     {
@@ -51,6 +57,14 @@ export const routerMap = {
     {
       path: RouterPath.ADMIN_LAB_TESTCASE_PUT,
       component: AdminPutLabTestcase,
+    },
+    {
+      path: RouterPath.ADMIN_USER_LIST,
+      component: UserList,
+    },
+    {
+      path: RouterPath.ADMIN_LAB_LIST,
+      component: LabList,
     }
   ]
 }

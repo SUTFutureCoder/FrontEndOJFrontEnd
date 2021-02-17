@@ -2,6 +2,7 @@ import axios from "axios"
 import {store, storeConst} from '@/store'
 import * as config from "@/constants/config";
 import * as colors from "@/constants/color"
+import * as RouterPath from "@/constants/router_path";
 
 const handleSuccess = res => {
   errorHandle(res.status, res.data)
@@ -47,6 +48,16 @@ const errorHandle = (status, data) => {
     text: (data.data !== undefined && data.data != null && data.data !== "") ? data.data : data.msg,
     color: colors.RED,
   })
+  if (data.code === 402) {
+    setTimeout(() => {
+      window.location=RouterPath.LOGIN
+    }, 1000)
+  }
+  if (data.code === 401) {
+    setTimeout(() => {
+      window.location=RouterPath.INFO
+    }, 1000)
+  }
 }
 
 

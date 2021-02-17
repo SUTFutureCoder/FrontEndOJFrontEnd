@@ -104,7 +104,7 @@ export default {
   name: "info",
   data: () => ({
     id: 0,
-    editorHeight: document.body.clientHeight - 90,
+    editorHeight: window.innerHeight - 90,
     editCols: 6,
     code: "",
     codeBuffer: "",
@@ -158,7 +158,7 @@ export default {
   mounted() {
     this.loadLabInfo(false)
     // document.getElementById("lab_desc-card").style.maxHeight = this.editorHeight + "px"
-    this.editorHeight = (document.body.clientHeight - 90)
+    this.editorHeight = (window.innerHeight - 90)
     // 设置大小
     document.getElementById("lab_desc-card").style.maxHeight = this.editorHeight + "px"
     document.getElementById("lab_desc-card").style.minHeight = this.editorHeight + "px"
