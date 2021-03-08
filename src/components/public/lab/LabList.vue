@@ -154,6 +154,15 @@ export default {
 
     adminMode: false,
   }),
+  watch: {
+    '$route' (to, from) {
+      // react to route changes...
+      if (to !== from) {
+        console.log(from)
+        this.adminMode = this.$route.query.adminMode ? this.$route.query.adminMode : false
+      }
+    }
+  },
   mounted() {
     this.page = !isNaN(parseInt(this.$route.query.page)) ? parseInt(this.$route.query.page) : 1
     this.adminMode = this.$route.query.adminMode ? this.$route.query.adminMode : false

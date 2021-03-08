@@ -19,7 +19,7 @@
         <a @click="labinfo(item.lab_id)">{{item.lab_name}}</a>
       </template>
       <template v-slot:item.status="{ item }">
-        <v-btn :color="getStatusColor(item.status)" @click="showSubmitResult(item)">{{convertStatusId(item.status)}}</v-btn>
+        <v-btn :color="getStatusColor(item.status)" class="status_word_color" @click="showSubmitResult(item)">{{convertStatusId(item.status)}}</v-btn>
       </template>
       <template v-slot:item.create_time="{ item }">
         {{convertTime(item.create_time)}}
@@ -294,5 +294,8 @@ export default {
 #info_user_summary, #info_user_type {
   text-align:center;
   font-size: 20px
+}
+.status_word_color {
+  color: white;
 }
 </style>

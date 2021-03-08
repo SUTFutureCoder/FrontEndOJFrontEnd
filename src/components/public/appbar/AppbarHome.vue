@@ -43,14 +43,14 @@
       </template>
       <v-list>
         <v-list-item
-            @click="changeRouterWithQuery(routerPath.ADMIN_LAB_LIST, {adminMode:true})"
+            @click="changeRouterWithQuery(routerPath.ADMIN_LAB_LIST, {adminMode:true, t: Date.now()})"
         >
-          <v-list-item-title>lab</v-list-item-title>
+          <v-list-item-title>Lab</v-list-item-title>
         </v-list-item>
         <v-list-item
             @click="changeRouterWithQuery(routerPath.ADMIN_USER_LIST)"
         >
-          <v-list-item-title>user</v-list-item-title>
+          <v-list-item-title>User</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>

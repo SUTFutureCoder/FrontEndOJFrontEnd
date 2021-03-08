@@ -12,6 +12,7 @@ import LabList from "@/components/public/lab/LabList"
 import LabInfo from "@/components/lab/Info"
 import AdminPutLab from "@/components/admin/PutLab"
 import AdminPutLabTestcase from "@/components/admin/PutLabTestcase";
+import AdminPutLabImitateTestcase from "@/components/admin/PutImitateLabTestcase";
 import UserList from "@/components/admin/UserList";
 
 
@@ -55,8 +56,12 @@ export const routerMap = {
       component: AdminPutLab,
     },
     {
-      path: RouterPath.ADMIN_LAB_TESTCASE_PUT,
+      path: RouterPath.ADMIN_LAB_TESTCASE_NORMAL_PUT,
       component: AdminPutLabTestcase,
+    },
+    {
+      path: RouterPath.ADMIN_LAB_TESTCASE_IMITATE_PUT,
+      component: AdminPutLabImitateTestcase,
     },
     {
       path: RouterPath.ADMIN_USER_LIST,

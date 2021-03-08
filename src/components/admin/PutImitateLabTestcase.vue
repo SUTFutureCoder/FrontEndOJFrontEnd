@@ -1,54 +1,51 @@
 <template>
   <v-container>
-    <div class="mt-2" v-for="idx in testcase_num" :key="idx">
-      <a>第{{idx}}个测试用例</a><v-spacer></v-spacer><v-btn color="warning" @click="deleteTestcase(idx - 1)">删除用例</v-btn>
-      <v-text-field
-          v-model="testcases[idx - 1].testcase_desc"
-          label="测试用例说明"
-          required
-      ></v-text-field>
+    <v-text-field
+        v-model="this.testcase_desc"
+        label="测试用例说明"
+        required
+    ></v-text-field>
 
-      <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
+    <v-text-field
+        v-model="this.testcase_url"
+        label="URL"
+        required
+    ></v-text-field>
 
-      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :syncInput=true
-                     theme="vs" width="100%" height="200px" @init="initTestcaseCode(idx - 1)" />
+    <v-toolbar-title class="grey--text text--darken-4 ma-2">控制</v-toolbar-title>
 
-      <v-row>
-        <v-col cols="12" sm="4" md="4">
-          <v-text-field
-              label="时间限制ms"
-              v-model="testcases[idx - 1].time_limit"
-          ></v-text-field>
-        </v-col>
+    <v-row>
+      <v-col cols="12" sm="4" md="4">
+        <v-text-field
+            label="宽度"
+            v-model="this.testcase_width"
+            placeholder="1920"
+        ></v-text-field>
+      </v-col>
 
-        <v-col cols="12" sm="4" md="4">
-          <v-text-field
-              label="内存限制kb"
-              v-model="testcases[idx - 1].mem_limit"
-          ></v-text-field>
-        </v-col>
+      <v-col cols="12" sm="4" md="4">
+        <v-text-field
+            label="高度 默认0为自适应"
+            v-model="this.testcase_height"
+            placeholder="0"
+        ></v-text-field>
+      </v-col>
 
-        <v-col cols="12" sm="4" md="4">
-          <v-text-field
-              label="从运行起延时ms"
-              placeholder="0"
-              v-model="testcases[idx - 1].wait_before"
-          ></v-text-field>
-        </v-col>
+      <v-col cols="12" sm="4" md="4">
+        <v-text-field
+            label="从运行起延时ms"
+            placeholder="0"
+            v-model="this.wait_before"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-btn block color="success" @click="testRun(idx - 1)">运行测试用例</v-btn>
+    <v-divider/>
 
-        <v-textarea
-            name="input-2-1"
-            filled
-            label="请点击【运行测试用例】按钮获取输出"
-            v-model="testcases[idx - 1].output"
-            auto-grow
-            disabled
-        ></v-textarea>
+    <v-container class="ma-5">
+    <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.soutu123.com%2Fback_pic%2F04%2F03%2F92%2F1058091ea68a193.jpg%21%2Ffw%2F700%2Fquality%2F90%2Funsharp%2Ftrue%2Fcompress%2Ftrue&refer=http%3A%2F%2Fpic.soutu123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1616380956&t=70d8635e1a7717d01fdbbce90c94358c">
+    </v-container>
 
-      </v-row>
-      <v-btn block color="success" @click="testRun(idx - 1)">运行测试用例</v-btn>
-    </div>
-    <v-btn class="mt-4 mb-4" block color="primary" @click="addTestCase">添加测试用例</v-btn>
     <v-divider/>
     <v-col cols="12">
       <v-col cols="6" class="d-inline-flex"><v-btn class="mt-4 mb-4" block color="success" @click="submitTestCases">保存</v-btn></v-col>
@@ -59,17 +56,23 @@
 
 <script>
 import {apiLab} from "@/api";
-import MMonacoEditor from 'vue-m-monaco-editor'
 import {store, storeConst} from "@/store";
 import * as colors from "@/constants/color";
 import * as RouterPath from "@/constants/router_path";
 
 export default {
-  name: "AddLabTestcase",
+  name: "PutComplexLabTestcase",
   data: () => ({
     testcase_num: 1,
     lab_id: 0,
     lab_type: 0,
+    testcase_desc: "",
+    testcase_url: "",
+    testcase_width: "",
+    testcase_height: "",
+    wait_before: "",
+
+    // 待组装
     testcases: [{
       testcase_desc: "",
       testcase_code: "",
@@ -94,10 +97,6 @@ export default {
         wait_before: 0,
       })
       this.testcase_num++
-    },
-    deleteTestcase: function (idx) {
-      this.testcases.splice(idx, 1)
-      this.testcase_num--
     },
     testRun: function (idx) {
       let testcase = {}
@@ -127,13 +126,9 @@ export default {
         }).catch()
       }).catch()
     },
-    initTestcaseCode: function (id) {
-      this.testcases[id].testcase_code = this.testcases[id].testcase_code_buffer
-    }
   },
   mounted() {
     this.lab_id = parseInt(this.$route.query.labId)
-    this.lab_type = parseInt(this.$route.query.labType)
     apiLab.getLabTestList({
       lab_id: this.lab_id,
     }).then(response => {
@@ -155,9 +150,6 @@ export default {
     }).catch(err => {
       console.log(err)
     })
-  },
-  components: {
-    MMonacoEditor,
   },
 }
 </script>

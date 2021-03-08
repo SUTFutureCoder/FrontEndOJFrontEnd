@@ -21,7 +21,8 @@ export const LAB_INFO = '/lab/info'
 export const ADMIN_LAB_PUT = '/admin/lab/put'
 
 // 添加测试用例
-export const ADMIN_LAB_TESTCASE_PUT = '/admin/lab/testcase/put'
+export const ADMIN_LAB_TESTCASE_NORMAL_PUT = '/admin/lab/testcase/normal/put'
+export const ADMIN_LAB_TESTCASE_IMITATE_PUT = '/admin/lab/testcase/imitate/put'
 
 export const ADMIN_USER_LIST = "/admin/user/list"
 

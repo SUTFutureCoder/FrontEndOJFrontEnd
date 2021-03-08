@@ -79,13 +79,26 @@
             style="overflow-y: auto; overflow-x: hidden; display: block;"
         >
           <template v-slot:item.status="{ item }">
-              <v-btn :color="getStatusColor(item.status)" @click="showSubmitResult(item)">{{convertStatusId(item.status)}}</v-btn>
+            <v-progress-circular
+                indeterminate
+                color="info"
+                v-if="item.update_time == ''"
+                class="mx-2"
+            ></v-progress-circular>
+            <v-btn :color="getStatusColor(item.status)" class="status_word_color" @click="showSubmitResult(item)">
+              {{convertStatusId(item.status)}}
+            </v-btn>
           </template>
           <template v-slot:item.create_time="{ item }">
             {{convertTime(item.create_time)}}
           </template>
           <template v-slot:item.update_time="{ item }">
             {{convertTime(item.update_time)}}
+            <v-progress-circular
+                indeterminate
+                color="info"
+                v-if="item.update_time === ''"
+            ></v-progress-circular>
           </template>
         </v-data-table>
     </v-bottom-sheet>
@@ -280,5 +293,7 @@ export default {
   display: flex;
   height: 100%;
 }
-
+.status_word_color {
+  color: white;
+}
 </style>

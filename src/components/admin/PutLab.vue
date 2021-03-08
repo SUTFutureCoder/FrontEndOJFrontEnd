@@ -74,12 +74,13 @@ import MMonacoEditor from 'vue-m-monaco-editor'
 // import theme style
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
-import * as config from "@/constants/config";
-import * as api from "@/api/api_const";
-import {apiLab} from "@/api";
-import * as RouterPath from "@/constants/router_path";
-import {store, storeConst} from "@/store";
-import * as colors from "@/constants/color";
+import * as config from "@/constants/config"
+import * as lab from "@/constants/lab"
+import * as api from "@/api/api_const"
+import {apiLab} from "@/api"
+import * as RouterPath from "@/constants/router_path"
+import {store, storeConst} from "@/store"
+import * as colors from "@/constants/color"
 
 
 Quill.register('modules/ImageExtend', ImageExtend)
@@ -90,16 +91,7 @@ export default {
     lab_id: 0,
 
     lab_type: "",
-    lab_type_maps: [
-      {"name": "HTML", "type": 0,},
-      {"name": "CSS", "type":1,},
-      {"name": "JavaScript", "type":2,},
-      {"name": "Vue", "type":3,},
-      {"name": "Complex", "type":4,},
-      {"name": "PRD", "type":5,},
-      {"name": "imitate", "type":6,},
-      {"name": "security", "type":7,},
-    ],
+    lab_type_maps: lab.LAB_TYPE_MAP,
 
     lab_name: "",
     lab_desc: dedent`
@@ -170,7 +162,7 @@ export default {
         lab_desc: this.lab_desc,
         lab_sample: this.lab_sample,
         lab_template: this.lab_template,
-        lab_type: this.lab_type,
+        lab_type: this.lab_type.type,
       }).then(response => {
         response
       }).catch(err => {
@@ -179,11 +171,16 @@ export default {
     },
     testcase: function () {
       // 变更实验室为建造中
-      apiLab.constructingLab({"lab_id": this.lab_id,}).then((data) => {
-        data
-        this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_PUT, query: {labId: this.lab_id}})
+      apiLab.constructingLab({"lab_id": this.lab_id,}).then(() => {
+        switch (this.lab_type.type) {
+          case lab.LAB_TYPE.NORMAL:
+            this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_NORMAL_PUT, query: {labId: this.lab_id}})
+            break
+          case lab.LAB_TYPE.IMITATE:
+            this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_IMITATE_PUT, query: {labId: this.lab_id}})
+            break
+        }
       }).catch()
-
     },
     initSample: function () {
       this.lab_sample = this.lab_sample_buffer
@@ -196,11 +193,11 @@ export default {
     this.lab_id = !isNaN(parseInt(this.$route.query.labId)) ? parseInt(this.$route.query.labId) : 0
     if (this.lab_id !== 0) {
       apiLab.getLabInfo({id: this.lab_id}).then((item) => {
-        this.lab_type = item.data.data.LabInfo.lab_type
-        this.lab_name = item.data.data.LabInfo.lab_name
-        this.lab_desc = item.data.data.LabInfo.lab_desc
-        this.lab_sample_buffer = item.data.data.LabInfo.lab_sample
-        this.lab_template_buffer = item.data.data.LabInfo.lab_template
+        this.lab_type = item.data.data.lab_info.lab_type
+        this.lab_name = item.data.data.lab_info.lab_name
+        this.lab_desc = item.data.data.lab_info.lab_desc
+        this.lab_sample = this.lab_sample_buffer = item.data.data.lab_info.lab_sample
+        this.lab_template = this.lab_template_buffer = item.data.data.lab_info.lab_template
       }).catch()
     }
   }

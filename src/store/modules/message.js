@@ -36,16 +36,23 @@ const mutations = {
   },
   [c.WEBSOCKET_CONN](state) {
     console.log('init websocket')
-    state.ws = new WebSocket('ws://localhost:8086/ws'),
-      state.ws.onopen = () => {
-        console.log('connection open')
-      }
-    state.ws.onmessage = (evt) => {
-      console.log(evt)
-    }
-    state.ws.onclose = () => {
-      console.log('connection close')
-    }
+    initWs(state)
+  }
+}
+
+function initWs(state) {
+  state.ws = new WebSocket('ws://localhost:8086/ws')
+  state.ws.onopen = () => {
+    console.log('connection open')
+  }
+  state.ws.onmessage = (evt) => {
+    console.log(evt)
+  }
+  state.ws.onclose = () => {
+    console.log('connection close')
+    setTimeout(function() {
+      initWs(state)
+    }, 1000);
   }
 }
 

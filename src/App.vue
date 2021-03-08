@@ -3,9 +3,7 @@
 
     <AppbarHome/>
 
-    <v-main
-        class="overflow-y-auto"
-    >
+    <v-main>
       <router-view></router-view>
     </v-main>
 
