@@ -18,9 +18,6 @@ const actions = {
   [c.ACTIONS_SNACKBAR_SHOW]: (context, payload) => {
     context.commit(c.SNACKBAR_SHOW, payload)
   },
-  [c.ACTIONS_WS_CONN]: (context) => {
-    context.commit(c.WEBSOCKET_CONN)
-  }
 }
 
 const mutations = {
@@ -34,27 +31,8 @@ const mutations = {
       state.snackbar.snackbar = false
     }, parseInt(state.snackbar.timeout, 10))
   },
-  [c.WEBSOCKET_CONN](state) {
-    console.log('init websocket')
-    initWs(state)
-  }
 }
 
-function initWs(state) {
-  state.ws = new WebSocket('ws://localhost:8086/ws')
-  state.ws.onopen = () => {
-    console.log('connection open')
-  }
-  state.ws.onmessage = (evt) => {
-    console.log(evt)
-  }
-  state.ws.onclose = () => {
-    console.log('connection close')
-    setTimeout(function() {
-      initWs(state)
-    }, 1000);
-  }
-}
 
 export default {
   namespaced: true,

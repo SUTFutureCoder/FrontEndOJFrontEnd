@@ -73,7 +73,7 @@
     <v-bottom-sheet v-model="submitSheet" scrollable inset>
         <v-data-table
             :headers="submitSheetTableHeaders"
-            :items="submitStatus"
+            :items="(wsSubmitStatus[startegy_const.STRATEGY_SUBMIT_LIST_BY_LAB_ID] !== undefined && wsSubmitStatus[startegy_const.STRATEGY_SUBMIT_LIST_BY_LAB_ID]['lab_id'] === this.id) ? wsSubmitStatus[startegy_const.STRATEGY_SUBMIT_LIST_BY_LAB_ID]['result_list'] : submitStatus"
             hide-default-footer
             class="elevation-1"
             style="overflow-y: auto; overflow-x: hidden; display: block;"
@@ -112,6 +112,9 @@ import {lab_submit_utils, time_utils} from "@/utils"
 import SubmitResult from "@/components/submit/SubmitResult";
 import {apiLab, apiSubmit} from '@/api'
 import MMonacoEditor from 'vue-m-monaco-editor'
+import * as WsConst from '@/constants/ws'
+import * as StartegyConst from '@/constants/strategy'
+import {mapState} from "vuex";
 
 export default {
   name: "info",
@@ -163,12 +166,18 @@ export default {
       statusName: "",
       resultList: [],
     },
+
+    startegy_const: StartegyConst,
+  }),
+  computed: mapState({
+    wsSubmitStatus: state => state.ws.msg,
   }),
   components: {
     SubmitResult,
     MMonacoEditor,
   },
   mounted() {
+    // window.vue = this
     this.loadLabInfo(false)
     // document.getElementById("lab_desc-card").style.maxHeight = this.editorHeight + "px"
     this.editorHeight = (window.innerHeight - 90)
@@ -216,26 +225,35 @@ export default {
     },
     showSubmitListTable() {
       this.submitSheet = true
+      delete this.wsSubmitStatus[this.startegy_const.STRATEGY_SUBMIT_LIST_BY_LAB_ID]
       this.initSubmitList()
+      this.getSubmitListByWs()
       if (this.submitSubmitInterval != null) {
         return
       }
       this.submitSubmitInterval = setInterval(
-          () => {this.initSubmitList()}
-          , 5000
+          () => {this.getSubmitListByWs()}
+          , 1000
       )
 
+    },
+    getSubmitListByWs() {
+      if (!this.submitSheet) {
+        return
+      }
+      apiSubmit.submitListByLabIdWs({cmd: WsConst.WS_CMD_SUBMIT_LIST_BY_LAB_ID, data: JSON.stringify({lab_id: this.id,})})
     },
     initSubmitList() {
       // 如果面板没有展开，则忽略
       if (!this.submitSheet) {
-        return ;
+        return
       }
       apiSubmit.submitListByLabId({
         lab_id: this.id,
       }).then(response => {
         if (response.data.data != null && response.data.data.length > 0) {
           this.submitStatus = response.data.data
+          this.submitStatusUpdateTime = new Date().getTime()
         }
       }).catch(err => {
         console.log(err)

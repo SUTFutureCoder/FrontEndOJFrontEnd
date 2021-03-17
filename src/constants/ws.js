@@ -1,0 +1,1 @@
+export const WS_CMD_SUBMIT_LIST_BY_LAB_ID = "SubmitListByLabId"
