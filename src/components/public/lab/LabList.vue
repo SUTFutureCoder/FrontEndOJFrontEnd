@@ -61,7 +61,7 @@
         </v-tooltip>
 
 
-        <v-tooltip top v-if="item.lab_info.status === 0">
+        <v-tooltip top v-if="item.lab_info.status !== 1">
           <template v-slot:activator="{ on, attrs }">
             <v-icon
                 medium
@@ -73,7 +73,8 @@
               mdi-test-tube
             </v-icon>
           </template>
-          <span>可用</span>
+          <span v-if="item.lab_info.status === -2 || item.lab_info.status === -3">恢复</span>
+          <span v-if="item.lab_info.status === 0">可用</span>
         </v-tooltip>
       </template>
 
