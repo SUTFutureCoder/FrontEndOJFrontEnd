@@ -12,7 +12,7 @@ export const lab = {
   // 添加实验室
   addLab: (data) => base.request(api.LAB_ADD, data),
   // 变更实验室
-  updateLab: (data) => base.request(api.LAB_UPDATE, data),
+  modifyLab: (data) => base.request(api.LAB_MODIFY, data),
   // 上线实验室
   enableLab: (data) => base.request(api.LAB_ENABLE, data),
   // 下线实验室

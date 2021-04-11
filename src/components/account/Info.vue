@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <h1 id="info_user_name">{{this.user.name}}</h1>
-    <h3 class="ma-5" id="info_user_type">{{this.user.user_type_str}}</h3>
-    <h3 class="ma-5" id="info_user_summary"><a style="color: green">{{this.user_summary.count_ac}}</a><a>/</a><a style="color: lightcoral">{{this.user_summary.count_fail}}</a><a>/</a><a style="color: cornflowerblue">{{ (this.user_summary.count_ac / this.user_summary.count_sum * 100).toFixed(2) + '%'}}</a></h3>
+    <h3 class="ma-5" id="info_user_type">{{this.user.user_type_str}} | {{this.user.id}}</h3>
+    <h3 class="ma-5" id="info_user_summary"><a style="color: green">{{this.user_summary.count_ac}}</a><a>/</a><a style="color: lightcoral">{{this.user_summary.count_fail}}</a><a>/</a><a style="color: cornflowerblue">{{ this.user_summary.count_sum === 0 ? '0%' : (this.user_summary.count_ac / this.user_summary.count_sum * 100).toFixed(2) + '%'}}</a></h3>
     <v-row class="ma-5"><div class="mx-auto"><v-btn class="info mx-2" @click="showUpdatePwdDialog">修改密码</v-btn><v-btn class="mx-2" @click="logout">退出</v-btn></div></v-row>
     <calendar-heatmap @day-click="clickHeatMap" :values="calendar_heatmap_data" :endDate="end_date"/>
     <v-data-table

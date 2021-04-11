@@ -22,6 +22,8 @@ export const LAB_SUMMARY_LIST = "/lab/list_with_summary"
 
 export const LAB_SUBMIT = "/lab_submit/submit"
 
+export const LAB_SUBMIT_WITH_FILE = "/lab_submit/submit_with_file"
+
 export const LAB_SUBMIT_LIST_BY_LAB_ID = "/lab_submit/submit_list_by_lab_id"
 
 export const TOOL_UPLOAD_FILE = "/tool/uploadfile"
@@ -33,7 +35,7 @@ export const JUDGER_TEST_RUN = "/judger/testrun"
 // 管理员
 export const LAB_ADD = "/admin/lab/add"
 
-export const LAB_UPDATE = "/admin/lab/update"
+export const LAB_MODIFY = "/admin/lab/modify"
 
 export const LAB_TESTCASE_SET = "/admin/lab_testcase/set"
 

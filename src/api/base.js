@@ -21,16 +21,8 @@ const handleFailed = error => {
   return Promise.reject(response)
 }
 
-let instance = axios.create({timeout:500, withCredentials: true})
+let instance = axios.create({withCredentials: true})
 instance.interceptors.response.use(
-  // 成功
-  handleSuccess,
-  // 失败
-  handleFailed,
-)
-
-let instance_no_timeout = axios.create({withCredentials: true})
-instance_no_timeout.interceptors.response.use(
   // 成功
   handleSuccess,
   // 失败
@@ -63,16 +55,17 @@ const errorHandle = (status, data) => {
 
 const request = (url, params) => {
   // 统一新增后端
-  url = config.BASE_BACKEND + url
-  return instance.post(url, params)
+  return instance.post(config.BASE_BACKEND + url, params, {timeout:500,})
 }
 const requestNoTimeout = (url, params) => {
   // 统一新增后端
-  url = config.BASE_BACKEND + url
-  return instance_no_timeout.post(url, params)
+  return instance.post(config.BASE_BACKEND + url, params, {})
+}
+const requestWithConfig = (url, params, axiosConfig) => {
+  return instance.post(config.BASE_BACKEND + url, params, axiosConfig)
 }
 
 export {request}
 export {requestNoTimeout}
+export {requestWithConfig}
 export {instance}
-export {instance_no_timeout}

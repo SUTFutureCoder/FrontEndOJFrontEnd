@@ -7,15 +7,8 @@
           cols="6"
           class="flex-grow-1 flex-shrink-0"
       >
-<!--        <v-card-->
-<!--            -->
-<!--            outlined-->
-<!--            absolute-->
-<!--            -->
-<!--        >-->
           <div id="lab_desc-card" v-html="LabInfo.lab_desc">
           </div>
-<!--        </v-card>-->
       </v-col>
 
       <v-col
@@ -29,12 +22,13 @@
         >
           <v-card-subtitle class="pb-0">提交代码</v-card-subtitle>
 
-          <MMonacoEditor v-model="code" mode="html" :syncInput=true
+          <MMonacoEditor v-model="code" mode="html" :cdnUrl=config_const.MONACO_CDN :syncInput=true
                   theme="vs" :style="{ height: (editorHeight - 92) + 'px',  minHeight: (editorHeight - 92) + 'px', width: '100%'}" @init="initCode"/>
 
           <v-card-actions>
             <input id="zip-submit-file-upload" type="file" accept=".zip" style="display: none" @change="onFileChange"/>
             <v-btn
+                v-if="!haveFormData"
                 color="primary"
                 @click.native="openFileDialog"
             >
@@ -42,12 +36,31 @@
             </v-btn>
 
             <v-btn
+                v-if="haveFormData"
                 color="primary"
+                @click="refreshFile"
+            >
+              重置ZIP上传
+            </v-btn>
+
+            <v-btn
+                v-if="!haveFormData"
+                color="success"
                 :loading="loading"
                 :disabled="loading"
                 @click="submitLab"
             >
-              提交
+                提交
+            </v-btn>
+
+            <v-btn
+                v-if="haveFormData"
+                color="success"
+                :loading="loading"
+                :disabled="loading"
+                @click="submitLabWithFile"
+            >
+                提交ZIP包
             </v-btn>
 
             <v-btn
@@ -114,7 +127,10 @@ import {apiLab, apiSubmit} from '@/api'
 import MMonacoEditor from 'vue-m-monaco-editor'
 import * as WsConst from '@/constants/ws'
 import * as StartegyConst from '@/constants/strategy'
+import * as ConfigConst from '@/constants/config'
 import {mapState} from "vuex";
+import {store, storeConst} from "@/store";
+import * as colors from "@/constants/color";
 
 export default {
   name: "info",
@@ -128,6 +144,7 @@ export default {
     },
     submitIds: [],
     formData: new FormData(),
+    haveFormData: false,
     submitStatus: [],
     submitSheet: false,
     submitSheetTableHeaders: [
@@ -168,6 +185,7 @@ export default {
     },
 
     startegy_const: StartegyConst,
+    config_const: ConfigConst,
   }),
   computed: mapState({
     wsSubmitStatus: state => state.ws.msg,
@@ -197,9 +215,18 @@ export default {
         if (rewrite) {
           this.code = this.codeBuffer
         }
-      }).catch(() => {})
+      }).catch(() => {
+
+      })
     },
     submitLab() {
+      this.loader = 'loading'
+      const l = this.loader
+      this[l] = !this[l]
+      setTimeout(() => (this[l] = false), 3000)
+      this.loader = null
+
+      // normal upload
       apiSubmit.submitLab({
         lab_id: this.id,
         submit_data: this.code,
@@ -209,13 +236,36 @@ export default {
         this.showSubmitListTable()
         // this.LabInfo = response.data['data'].LabInfo
       }).catch(err => {
-        console.log(err)
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "提交失败，请重试 - " + err,
+          color: colors.RED,
+        })
       })
+    },
+    submitLabWithFile() {
       this.loader = 'loading'
       const l = this.loader
       this[l] = !this[l]
       setTimeout(() => (this[l] = false), 3000)
       this.loader = null
+
+      // upload
+      apiSubmit.submitLabWithFile(this.formData, {
+        headers: {'Content-Type':'multipart/form-data', 'data':this.id,}
+      }).then(response => {
+        this.submitIds.push(response.data.data)
+        this.submitSheet = true
+        this.showSubmitListTable()
+      }).catch(err => {
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "提交失败，请重试 - " + err,
+          color: colors.RED,
+        })
+      })
+    },
+    refreshFile() {
+      this.formData.delete("file")
+      this.haveFormData = false
     },
     initCode() {
       if (this.codeBuffer === "") {
@@ -283,14 +333,16 @@ export default {
       }
     },
     onFileChange(e) {
-      let self = this;
       let files = e.target.files || e.dataTransfer.files;
 
       if(files.length > 0){
         for(let i = 0; i< files.length; i++){
-          self.formData.append("file", files[i], files[i].name);
+          this.formData.set("file", files[i], files[i].name);
+          this.haveFormData = true
         }
       }
+      e.target.value = ''
+      return false
     },
   }
 }

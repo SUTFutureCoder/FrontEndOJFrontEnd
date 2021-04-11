@@ -10,7 +10,7 @@
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
 
-      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :syncInput=true
+      <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :cdnUrl=configs.MONACO_CDN :syncInput=true
                      theme="vs" width="100%" height="200px" @init="initTestcaseCode(idx - 1)" />
 
       <v-row>
@@ -62,6 +62,7 @@ import {apiLab} from "@/api";
 import MMonacoEditor from 'vue-m-monaco-editor'
 import {store, storeConst} from "@/store";
 import * as colors from "@/constants/color";
+import * as configs from "@/constants/config"
 import * as RouterPath from "@/constants/router_path";
 
 export default {
@@ -80,6 +81,8 @@ export default {
       mem_limit: 0,
       wait_before: 0,
     }],
+
+    configs: configs,
   }),
   methods: {
     addTestCase: function () {

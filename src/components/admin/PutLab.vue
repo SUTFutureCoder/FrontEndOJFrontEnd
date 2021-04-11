@@ -22,16 +22,15 @@
       <quill-editor
           class="editor"
           ref="myTextEditor"
-          :value="lab_desc"
+          :content="lab_desc"
           :options="editorOption"
-          @change="onEditorChange"
+          @change="onEditorChange($event)"
       />
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【用于试跑校验，对外隐藏】</v-toolbar-title>
-      <MMonacoEditor v-model="lab_sample" mode="html" :syncInput=true theme="vs" width="100%" height="600px" @init="initSample"/>
-
+      <MMonacoEditor v-model="lab_sample" mode="html" :cdnUrl=config.MONACO_CDN :syncInput=true theme="vs" width="100%" height="600px" @init="initSample"/>
       <v-toolbar-title class="grey--text text--darken-4 ma-2">代码模板【用于辅助答题，对外显示】</v-toolbar-title>
-      <MMonacoEditor v-model="lab_template" mode="html" :syncInput=true theme="vs" width="100%" height="600px" @init="initTemplate"/>
+      <MMonacoEditor v-model="lab_template" mode="html" :cdnUrl=config.MONACO_CDN :syncInput=true theme="vs" width="100%" height="600px" @init="initTemplate"/>
 
       <v-col>
         <v-btn
@@ -66,7 +65,6 @@
 
 <script>
 import dedent from 'dedent'
-import debounce from 'lodash/debounce'
 import { quillEditor, Quill } from 'vue-quill-editor'
 import { container, ImageExtend, QuillWatch } from 'quill-image-extend-module'
 import MMonacoEditor from 'vue-m-monaco-editor'
@@ -81,7 +79,6 @@ import {apiLab} from "@/api"
 import * as RouterPath from "@/constants/router_path"
 import {store, storeConst} from "@/store"
 import * as colors from "@/constants/color"
-
 
 Quill.register('modules/ImageExtend', ImageExtend)
 
@@ -127,17 +124,15 @@ export default {
           }
         },
       },
-      placeholder: "实验室描述"
+      placeholder: "实验室描述",
     },
+    config: config,
   }),
   components: {
     quillEditor,
     MMonacoEditor,
   },
   methods: {
-    onEditorChange: debounce(function(value) {
-      this.content = value.html
-    }, 466),
     submit: function () {
       apiLab.addLab({
         lab_name: this.lab_name,
@@ -156,7 +151,7 @@ export default {
       })
     },
     update: function () {
-      apiLab.updateLab({
+      apiLab.modifyLab({
         lab_id: this.lab_id,
         lab_name: this.lab_name,
         lab_desc: this.lab_desc,
@@ -165,6 +160,10 @@ export default {
         lab_type: this.lab_type.type,
       }).then(response => {
         response
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "更新成功",
+          color: colors.GREEN,
+        })
       }).catch(err => {
         console.log(err)
       })
@@ -188,6 +187,13 @@ export default {
     initTemplate: function () {
       this.lab_template = this.lab_template_buffer
     },
+    onEditorChange: function ({ quill, html, text }) {
+      console.log('editor change!', quill, html, text)
+      if (html === "") {
+        return
+      }
+      this.lab_desc = html
+    }
   },
   mounted() {
     this.lab_id = !isNaN(parseInt(this.$route.query.labId)) ? parseInt(this.$route.query.labId) : 0

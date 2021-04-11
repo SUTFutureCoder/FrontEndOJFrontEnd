@@ -11,5 +11,7 @@ export const submit = {
   },
   // 提交
   submitLab: (data) =>  base.request(api.LAB_SUBMIT, data),
+  // 提交文件
+  submitLabWithFile: (data, axiosConfig) => base.requestWithConfig(api.LAB_SUBMIT_WITH_FILE, data, axiosConfig)
 }
 
