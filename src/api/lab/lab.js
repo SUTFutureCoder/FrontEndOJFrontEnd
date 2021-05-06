@@ -26,4 +26,6 @@ export const lab = {
   runLabTestcase: (data) => base.requestNoTimeout(api.LAB_TESTCASE_RUN, data),
   // 设置实验室测试用例
   setLabTestcase: (data) => base.request(api.LAB_TESTCASE_SET, data),
+  // 上传测试用例图片
+  uploadTestcaseImg: (data, axiosConfig) => base.requestWithConfig(api.TOOL_UPLOAD_FILE, data, axiosConfig)
 }

@@ -8,7 +8,25 @@
           required
       ></v-text-field>
 
-      <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
+      <v-row>
+        <v-toolbar-title class="grey--text text--darken-4 ma-2">控制台执行代码</v-toolbar-title>
+        <v-tooltip right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+                medium
+                v-bind="attrs"
+                v-on="on"
+            >
+              mdi-help-circle-outline
+            </v-icon>
+          </template>
+          <span>
+            请输入能够在浏览器控制台执行的语句<br/>
+            例1：获得id为test的文字<br/>innerText
+          </span>
+        </v-tooltip>
+      </v-row>
+
 
       <MMonacoEditor v-model="testcases[idx - 1].testcase_code" mode="javascript" :cdnUrl=configs.MONACO_CDN :syncInput=true
                      theme="vs" width="100%" height="200px" @init="initTestcaseCode(idx - 1)" />
@@ -38,11 +56,9 @@
 
         <v-textarea
             name="input-2-1"
-            filled
-            label="请点击【运行测试用例】按钮获取输出"
+            label="请点击【运行测试用例】按钮获取输出 或 手动输入预期结果"
             v-model="testcases[idx - 1].output"
             auto-grow
-            disabled
         ></v-textarea>
 
       </v-row>
@@ -71,6 +87,7 @@ export default {
     testcase_num: 1,
     lab_id: 0,
     lab_type: 0,
+    manual_mode: false,
     testcases: [{
       testcase_desc: "",
       testcase_code: "",
@@ -107,8 +124,17 @@ export default {
       testcase.lab_id = this.lab_id
       testcase.lab_testcase = this.testcases[idx]
       apiLab.runLabTestcase(testcase).then(response => {
+        if (response.data.data !== undefined && response.data.data.Err !== "") {
+          store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+            text: "执行失败，请检查执行代码JS语句是否正确、是否尝试获取不存在的元素",
+            color: colors.RED,
+          })
+          return
+        }
         this.testcases[idx].output = response.data.data.SubmitOutput
-      }).catch()
+      }).catch(err => {
+        console.log(err)
+      })
     },
     submitTestCases: function () {
       apiLab.setLabTestcase({"lab_id": this.lab_id, "testcases":this.testcases}).then(() => {
@@ -135,6 +161,7 @@ export default {
     }
   },
   mounted() {
+    document.documentElement.scrollTop = document.body.scrollTop = 0
     this.lab_id = parseInt(this.$route.query.labId)
     this.lab_type = parseInt(this.$route.query.labType)
     apiLab.getLabTestList({
@@ -145,7 +172,7 @@ export default {
       for (let i in response.data.data) {
         this.testcases.push({
           testcase_desc: response.data.data[i].testcase_desc,
-          testcase_code: "",
+          testcase_code: response.data.data[i].testcase_code,
           testcase_code_buffer: response.data.data[i].testcase_code,
           input: response.data.data[i].input,
           output: response.data.data[i].output,

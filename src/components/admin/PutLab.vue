@@ -171,7 +171,7 @@ export default {
     testcase: function () {
       // 变更实验室为建造中
       apiLab.constructingLab({"lab_id": this.lab_id,}).then(() => {
-        switch (this.lab_type.type) {
+        switch (this.lab_type) {
           case lab.LAB_TYPE.NORMAL:
             this.$router.push({path: RouterPath.ADMIN_LAB_TESTCASE_NORMAL_PUT, query: {labId: this.lab_id}})
             break
@@ -188,7 +188,8 @@ export default {
       this.lab_template = this.lab_template_buffer
     },
     onEditorChange: function ({ quill, html, text }) {
-      console.log('editor change!', quill, html, text)
+      quill
+      text
       if (html === "") {
         return
       }
