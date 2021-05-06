@@ -24,7 +24,14 @@
         text
         x-large
     >
-      <span class="mr-2">List</span>
+      <span class="mr-2">Labs</span>
+    </v-btn>
+    <v-btn
+        @click="changeRouter(routerPath.CONTEST_LIST)"
+        text
+        x-large
+    >
+      <span class="mr-2">Contests</span>
     </v-btn>
     <v-menu
         offset-y
@@ -46,6 +53,16 @@
             @click="changeRouterWithQuery(routerPath.ADMIN_LAB_LIST, {adminMode:true, t: Date.now()})"
         >
           <v-list-item-title>Lab</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+            @click="changeRouterWithQuery(routerPath.ADMIN_CONTEST_LIST)"
+        >
+          <v-list-item-title>Contest</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+            @click="changeRouterWithQuery(routerPath.ADMIN_CONTEST_PUT)"
+        >
+          <v-list-item-title>ContestCreate[temp]</v-list-item-title>
         </v-list-item>
         <v-list-item
             @click="changeRouterWithQuery(routerPath.ADMIN_USER_LIST)"

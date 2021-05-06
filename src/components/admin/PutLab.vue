@@ -22,9 +22,9 @@
       <quill-editor
           class="editor"
           ref="myTextEditor"
+          v-model="lab_desc"
           :content="lab_desc"
           :options="editorOption"
-          @change="onEditorChange($event)"
       />
 
       <v-toolbar-title class="grey--text text--darken-4 ma-2">正确答案代码【用于试跑校验，对外隐藏】</v-toolbar-title>
@@ -187,14 +187,6 @@ export default {
     initTemplate: function () {
       this.lab_template = this.lab_template_buffer
     },
-    onEditorChange: function ({ quill, html, text }) {
-      quill
-      text
-      if (html === "") {
-        return
-      }
-      this.lab_desc = html
-    }
   },
   mounted() {
     this.lab_id = !isNaN(parseInt(this.$route.query.labId)) ? parseInt(this.$route.query.labId) : 0

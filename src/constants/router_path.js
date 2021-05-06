@@ -16,6 +16,9 @@ export const LAB_LIST = '/lab/list'
 // 实验室详情
 export const LAB_INFO = '/lab/info'
 
+// 比赛列表
+export const CONTEST_LIST = '/contest/list'
+
 // 管理员功能
 // 添加实验室
 export const ADMIN_LAB_PUT = '/admin/lab/put'
@@ -27,3 +30,10 @@ export const ADMIN_LAB_TESTCASE_IMITATE_PUT = '/admin/lab/testcase/imitate/put'
 export const ADMIN_USER_LIST = "/admin/user/list"
 
 export const ADMIN_LAB_LIST = "/admin/lab/list"
+
+// 比赛列表
+export const ADMIN_CONTEST_LIST = "/admin/contest/list"
+// 创建比赛
+export const ADMIN_CONTEST_PUT = "/admin/contest/put"
+// 绑定比赛实验室
+export const ADMIN_CONTEST_BIND_LABS = "/admin/contest/bind"

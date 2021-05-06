@@ -14,6 +14,9 @@ import AdminPutLab from "@/components/admin/PutLab"
 import AdminPutLabTestcase from "@/components/admin/PutLabTestcase";
 import AdminPutLabImitateTestcase from "@/components/admin/PutImitateLabTestcase";
 import UserList from "@/components/admin/UserList";
+import ContestList from "@/components/admin/ContestList";
+import PutContest from "@/components/admin/PutContest";
+import ContestBind from "@/components/admin/ContestBind";
 
 
 Vue.use(VueRouter)
@@ -49,6 +52,11 @@ export const routerMap = {
       path: RouterPath.LAB_INFO,
       component: LabInfo,
     },
+    // 竞赛
+    {
+      path: RouterPath.CONTEST_LIST,
+      component: ContestList,
+    },
 
     // 管理员
     {
@@ -70,6 +78,18 @@ export const routerMap = {
     {
       path: RouterPath.ADMIN_LAB_LIST,
       component: LabList,
+    },
+    {
+      path: RouterPath.ADMIN_CONTEST_PUT,
+      component: PutContest,
+    },
+    {
+      path: RouterPath.ADMIN_CONTEST_LIST,
+      component: ContestList,
+    },
+    {
+      path: RouterPath.ADMIN_CONTEST_BIND_LABS,
+      component: ContestBind,
     }
   ]
 }

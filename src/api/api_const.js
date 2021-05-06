@@ -32,6 +32,16 @@ export const TOOL_GET_FILE = "/tool/getfile"
 
 export const JUDGER_TEST_RUN = "/judger/testrun"
 
+export const CONTEST_LIST_WITH_SUMMARY = "/contest/list_with_summary"
+
+export const CONTEST_INFO = "/contest/info"
+
+export const CONTEST_SIGN = "/contest/sign"
+
+export const CONTEST_DASHBOARD = "/contest/dashboard"
+
+export const CONTEST_USERS = "/contest/users"
+
 // 管理员
 export const LAB_ADD = "/admin/lab/add"
 
@@ -62,3 +72,17 @@ export const USER_LIST = "/admin/user/list"
 export const USER_GRANT = "/admin/user/grant"
 
 export const USER_MODIFY = "/admin/user/modify"
+
+export const CONTEST_CREATE = "/admin/contest/create"
+
+export const CONTEST_MODIFY = "/admin/contest/modify"
+
+export const CONTEST_STATUS_MODIFY = "/admin/contest/status_modify"
+
+export const CONTEST_MANAGE_LABS = "/admin/contest/manage_labs"
+
+export const CONTEST_GET_LABS = "/admin/contest/get_labs"
+
+export const CONTEST_ADD_USERS = "/admin/contest/add_users"
+
+export const CONTEST_USERS_STATUS_MODIFY = "/admin/contest/users_status_modify"
