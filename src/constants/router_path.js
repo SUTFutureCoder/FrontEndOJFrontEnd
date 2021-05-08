@@ -19,6 +19,9 @@ export const LAB_INFO = '/lab/info'
 // 比赛列表
 export const CONTEST_LIST = '/contest/list'
 
+// 比赛详情
+export const CONTEST_INFO = '/contest/info'
+
 // 管理员功能
 // 添加实验室
 export const ADMIN_LAB_PUT = '/admin/lab/put'

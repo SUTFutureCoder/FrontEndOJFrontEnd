@@ -14,9 +14,9 @@ import AdminPutLab from "@/components/admin/PutLab"
 import AdminPutLabTestcase from "@/components/admin/PutLabTestcase";
 import AdminPutLabImitateTestcase from "@/components/admin/PutImitateLabTestcase";
 import UserList from "@/components/admin/UserList";
-import ContestList from "@/components/admin/ContestList";
 import PutContest from "@/components/admin/PutContest";
 import ContestBind from "@/components/admin/ContestBind";
+import ContestList from "@/components/public/contest/ContestList";
 
 
 Vue.use(VueRouter)
