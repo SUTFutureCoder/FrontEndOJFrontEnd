@@ -16,4 +16,6 @@ export const contest = {
   modifyStatus: (data) => base.request(api.CONTEST_STATUS_MODIFY, data),
   // 比赛列表
   contestWithSummary: (data) => base.request(api.CONTEST_LIST_WITH_SUMMARY, data),
+  // 检查是否可以进入比赛
+  tryAccess: (data) => base.request(api.CONTEST_TRY_ACCESS, data),
 }

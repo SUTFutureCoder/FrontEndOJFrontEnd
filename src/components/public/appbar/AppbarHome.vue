@@ -55,14 +55,9 @@
           <v-list-item-title>Lab</v-list-item-title>
         </v-list-item>
         <v-list-item
-            @click="changeRouterWithQuery(routerPath.ADMIN_CONTEST_LIST)"
+            @click="changeRouterWithQuery(routerPath.ADMIN_CONTEST_LIST, {adminMode:true, t: Date.now()})"
         >
           <v-list-item-title>Contest</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-            @click="changeRouterWithQuery(routerPath.ADMIN_CONTEST_PUT)"
-        >
-          <v-list-item-title>ContestCreate[temp]</v-list-item-title>
         </v-list-item>
         <v-list-item
             @click="changeRouterWithQuery(routerPath.ADMIN_USER_LIST)"

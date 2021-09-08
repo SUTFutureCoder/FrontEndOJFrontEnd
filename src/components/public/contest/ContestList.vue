@@ -16,7 +16,7 @@
         ></v-text-field>
       </v-col>
       <v-col cols="4" v-if="adminMode">
-        <v-btn block x-large class="primary" @click="putContest">创建实验室</v-btn>
+        <v-btn block x-large class="primary" @click="putContest">创建比赛</v-btn>
       </v-col>
     </v-row>
 
@@ -30,23 +30,22 @@
         @click:row="clickTableRow"
     >
       <template v-slot:item.actions="{ item }">
-        <v-container v-if="contestChooseMode" >
+        <v-container v-if="isInSigninTime(item)">
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
                   medium
                   class="mr-2"
-                  @click.stop="addContestLab(item)"
+                  @click.stop="signinContest(item)"
                   v-bind="attrs"
                   v-on="on"
               >
-                mdi-playlist-plus
+                mdi-login
               </v-icon>
             </template>
-            <span>添加到列表末尾</span>
+            <span>报名</span>
           </v-tooltip>
         </v-container>
-
         <v-container v-if="adminMode" >
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
@@ -187,6 +186,11 @@ export default {
         value: 'contest_signin_time_range',
       },
       {
+        text: '操作',
+        sortable: false,
+        value: 'actions',
+      },
+      {
         text: '实验室数',
         sortable: false,
         value: 'contest_lab_count',
@@ -239,7 +243,24 @@ export default {
       if (!this.jumpToContest) {
         return
       }
-      this.$router.push({path: RouterPath.CONTEST_INFO, query: {contestId: value.contest_info.id}})
+      // 检查是否已经报名
+      let reqData = {
+        contest_id: value.contest_info.id,
+      }
+      apiContest.tryAccess(reqData).then(response => {
+        if (response.data.data !== true) {
+          console.log(response)
+          store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+            text: "请先报名比赛",
+            color: colors.RED,
+          })
+          return
+        }
+        // 进行跳转
+        this.$router.push({path: RouterPath.CONTEST_INFO, query: {contestId: value.contest_info.id}})
+      }).catch(err => {
+        console.log(err)
+      })
     },
     clickPagination(page) {
       this.page = page
@@ -257,6 +278,9 @@ export default {
         reqData.contest_id = parseInt(this.searchContestId, 10)
       }
       apiContest.contestWithSummary(reqData).then(response => {
+        if (response.data.data.contest_list == null) {
+          return
+        }
         this.contestList = response.data.data.contest_list
         for (let i in this.contestList) {
           let summary = this.contestList[i].contest_submit_summary
@@ -270,10 +294,18 @@ export default {
         console.log(err)
       })
     },
-    addContestLab(item) {
-      this.$emit("addContestLab",item);
-    }
-  },
+    signinContest(item) {
+      // 检查是否在报名时间之内
+
+      console.log(item);
+    },
+    isInSigninTime(item) {
+      let currentTime = new Date().getTime()
+      if (item.contest_info.signup_start_time <= currentTime && currentTime <= item.contest_info.signup_end_time) {
+        return true
+      }
+    },
+   },
   props:{
     contestChooseMode: {
       type: Boolean,

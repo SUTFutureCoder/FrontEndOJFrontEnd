@@ -142,6 +142,7 @@ export default {
         lab_type: this.lab_type.type,
       }).then(response => {
         this.lab_id = response.data.data
+        this.lab_type = this.lab_type.type
         store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
           text: "创建成功，请继续创建测试用例",
           color: colors.GREEN,
@@ -192,6 +193,7 @@ export default {
     this.lab_id = !isNaN(parseInt(this.$route.query.labId)) ? parseInt(this.$route.query.labId) : 0
     if (this.lab_id !== 0) {
       apiLab.getLabInfo({id: this.lab_id}).then((item) => {
+        console.log(item.data.data.lab_info.lab_type)
         this.lab_type = item.data.data.lab_info.lab_type
         this.lab_name = item.data.data.lab_info.lab_name
         this.lab_desc = item.data.data.lab_info.lab_desc

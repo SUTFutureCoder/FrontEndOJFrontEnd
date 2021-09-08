@@ -38,6 +38,8 @@ export const CONTEST_INFO = "/contest/info"
 
 export const CONTEST_SIGN = "/contest/sign"
 
+export const CONTEST_TRY_ACCESS = "/contest/try_access"
+
 export const CONTEST_DASHBOARD = "/contest/dashboard"
 
 export const CONTEST_USERS = "/contest/users"

@@ -1,6 +1,6 @@
 export const LAB_TYPE_MAP = [
-  {"name": "Normal", "type": 0,},
-  {"name": "Imitate[BETA]", "type":1,},
+  {"type": 0, "name": "Normal", },
+  {"type":1, "name": "Imitate[BETA]",},
 ]
 
 export const LAB_TYPE = {

@@ -4,7 +4,7 @@ import * as WsConst from "@/constants/ws";
 
 export function handleJudgerResultCallBack(data) {
   // 显示条
-  data = data.data
+  data = data.Data
   store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
     text: "lab:" + data.lab_id + " #" + data.id + " - " + lab_submit_utils.convertStatusId(data.status),
     color: lab_submit_utils.getStatusColor(data.status),

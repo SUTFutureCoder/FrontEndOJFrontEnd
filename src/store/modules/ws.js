@@ -27,7 +27,7 @@ const mutations = {
     ws.SendWs(state, payload.cmd, payload.data)
   },
   [c.WEBSOCKET_MSG](state, payload) {
-    state.msg[payload.type] = payload.data
+    state.msg[payload.type] = payload.Data
   }
 }
 
