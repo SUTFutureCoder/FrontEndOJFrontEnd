@@ -8,6 +8,10 @@ export const lab = {
   getLabList: (data) => base.request(api.LAB_LIST, data),
   // 获取实验室聚合列表
   getLabSummaryList: (data) => base.request(api.LAB_SUMMARY_LIST, data),
+  // 根据Id列表获取实验室
+  getLabByIds: (data) => base.request(api.LAB_GET_BY_IDS, data),
+  // 根据Id列表获取实验室，并根据用户聚合
+  getLabByIdsWithUserSummary: (data) => base.request(api.LAB_GET_BY_IDS_WITH_USER_SUMMARY, data),
 
   // 添加实验室
   addLab: (data) => base.request(api.LAB_ADD, data),

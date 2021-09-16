@@ -7,6 +7,7 @@
       <v-col>
         <v-text-field
             v-model="searchLabId"
+            v-if="!contestMode"
             append-icon="mdi-magnify"
             label="Search ID"
             single-line
@@ -21,7 +22,7 @@
     </v-row>
 
     <v-data-table
-        :headers="adminMode || contestChooseMode ? headersAdmin : headers"
+        :headers="showTableHeaders()"
         :items="labList"
         :page.sync="page"
         :items-per-page="itemsPerPage"
@@ -100,7 +101,10 @@
 
 
     </v-data-table>
-    <div class="text-center pt-2">
+    <div
+        class="text-center pt-2"
+        v-if="!contestMode"
+    >
       <v-pagination v-model="page" :length="pageCount" :total-visible="7" @input="clickPagination"></v-pagination>
     </div>
   </v-container>
@@ -150,7 +154,7 @@ export default {
         value: 'actions',
       }
     ],
-    headers: [
+    normalHeaders: [
       {
         text: 'id',
         align: 'start',
@@ -168,6 +172,24 @@ export default {
         value: 'summary_str',
       }
     ],
+    contestHeaders: [
+      {
+        text: 'id',
+        align: 'start',
+        sortable: false,
+        value: 'lab_info.contest_show_id',
+      },
+      {
+        text: '实验室名称',
+        sortable: false,
+        value: 'lab_info.lab_name',
+      },
+      {
+        text: 'AC/ER/PEND/SUM',
+        sortable: false,
+        value: 'summary_str',
+      },
+    ],
     page: 1,
     itemsPerPage: 9,
     pageCount: 1,
@@ -182,12 +204,23 @@ export default {
         console.log(from)
         this.adminMode = this.$route.query.adminMode ? this.$route.query.adminMode : false
       }
+    },
+    contestLabIds (newVal) {
+      if (newVal == null || newVal.length === 0) {
+        return
+      }
+      this.getLabListByIds(newVal)
     }
   },
   mounted() {
     this.page = !isNaN(parseInt(this.$route.query.page)) ? parseInt(this.$route.query.page) : 1
     this.adminMode = this.$route.query.adminMode ? this.$route.query.adminMode : false
-    this.getLabListByPage(this.page, this.itemsPerPage)
+    if (!this.contestMode) {
+      this.getLabListByPage(this.page, this.itemsPerPage)
+    }
+    if (this.contestMode) {
+      this.getLabListByIds(this.contestLabIds)
+    }
   },
   methods: {
     putLab() {
@@ -218,6 +251,10 @@ export default {
       if (!this.jumpToLab) {
         return
       }
+      if (this.contestMode && this.contestId !== 0) {
+        this.$router.push({path: RouterPath.CONTEST_LAB_INFO, query: {labId: value.lab_info.id, contestId: this.contestId}})
+        return
+      }
       this.$router.push({path: RouterPath.LAB_INFO, query: {labId: value.lab_info.id}})
     },
     clickPagination(page) {
@@ -236,6 +273,9 @@ export default {
         reqData.lab_id = parseInt(this.searchLabId, 10)
       }
       apiLab.getLabSummaryList(reqData).then(response => {
+        if (response.data.data.lab_list == null) {
+          return
+        }
         this.labList = response.data.data.lab_list
         for (let i in this.labList) {
           let summary = this.labList[i].summary
@@ -247,19 +287,81 @@ export default {
         console.log(err)
       })
     },
+    getLabListByIds(contestLabIds) {
+      let reqData = {
+        lab_ids: contestLabIds,
+        contest_id: parseInt(this.contestId, 10),
+      }
+      apiLab.getLabByIdsWithUserSummary(reqData).then(response => {
+        if (response.data.data.lab_list == null) {
+          return
+        }
+        let labList = response.data.data.lab_list
+
+        // sort
+        let idMaps = []
+        for (let i in contestLabIds) {
+          idMaps[contestLabIds[i]] = i
+        }
+
+        let sortedLabList = []
+        for (let i in labList) {
+          let idx = parseInt(idMaps[labList[i].lab_info.id], 10)
+          labList[i].lab_info.contest_show_id = String.fromCharCode(65 + idx)
+          sortedLabList[idx] = labList[i]
+        }
+
+        this.labList = sortedLabList
+        for (let i in this.labList) {
+          let summary = this.labList[i].summary
+          this.labList[i].summary_str = summary.count_ac + "/" + summary.count_fail + "/" + summary.count_juding + "/" + summary.count_sum
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     addContestLab(item) {
       this.$emit("addContestLab",item);
+    },
+    showTableHeaders() {
+      if (this.adminMode || this.contestChooseMode) {
+        return this.headersAdmin
+      }
+      if (this.contestMode) {
+        return this.contestHeaders
+      }
+      return this.normalHeaders
     }
   },
   props:{
+    // 编辑竞赛模式
     contestChooseMode: {
       type: Boolean,
       default: false,
     },
+    // 显示标题
     showTitle: {
       type: Boolean,
       default: true,
     },
+    // 竞赛模式
+    contestMode: {
+      type: Boolean,
+      default: false,
+    },
+    // 竞赛id
+    contestId: {
+      type: Number,
+      default: 0,
+    },
+    // 竞赛用实验室id列表，指定查询，具备顺序
+    contestLabIds: {
+      type: Array,
+      default: function () {
+        return []
+      },
+    },
+    // 是否跳转到实验室
     jumpToLab: {
       type: Boolean,
       default: true,

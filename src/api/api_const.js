@@ -20,6 +20,10 @@ export const LAB_INFO = "/lab/info"
 
 export const LAB_SUMMARY_LIST = "/lab/list_with_summary"
 
+export const LAB_GET_BY_IDS = "/lab/get_by_ids"
+
+export const LAB_GET_BY_IDS_WITH_USER_SUMMARY = "/lab/get_by_ids_with_user_summary"
+
 export const LAB_SUBMIT = "/lab_submit/submit"
 
 export const LAB_SUBMIT_WITH_FILE = "/lab_submit/submit_with_file"
@@ -37,6 +41,10 @@ export const CONTEST_LIST_WITH_SUMMARY = "/contest/list_with_summary"
 export const CONTEST_INFO = "/contest/info"
 
 export const CONTEST_SIGN = "/contest/sign"
+
+export const CONTEST_GET_SIGN_STATUS = "/contest/get_contests_sign_status"
+
+export const CONTEST_GET_USER_CONTEST_AC_LABIDS = "/contest/get_user_contest_ac_labids"
 
 export const CONTEST_TRY_ACCESS = "/contest/try_access"
 

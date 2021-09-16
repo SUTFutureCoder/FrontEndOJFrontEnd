@@ -18,4 +18,12 @@ export const contest = {
   contestWithSummary: (data) => base.request(api.CONTEST_LIST_WITH_SUMMARY, data),
   // 检查是否可以进入比赛
   tryAccess: (data) => base.request(api.CONTEST_TRY_ACCESS, data),
+  // 报名比赛
+  sign: (data) => base.request(api.CONTEST_SIGN, data),
+  // 获取竞赛列表报名状态
+  getContestsSignStatus: (data) => base.request(api.CONTEST_GET_SIGN_STATUS, data),
+  // 获取用户ac实验室列表
+  getUserContestAcLabids: (data) => base.request(api.CONTEST_GET_USER_CONTEST_AC_LABIDS, data),
+  // 获取竞赛dashboard
+  getContestDashboard: (data) => base.request(api.CONTEST_DASHBOARD, data),
 }

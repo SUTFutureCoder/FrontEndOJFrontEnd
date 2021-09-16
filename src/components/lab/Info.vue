@@ -117,7 +117,7 @@
     </v-bottom-sheet>
 
     <SubmitResult :submit_result="submit_result"/>
-    </v-container>
+  </v-container>
 </template>
 
 <script>
@@ -226,9 +226,11 @@ export default {
       setTimeout(() => (this[l] = false), 3000)
       this.loader = null
 
+      let contest_id = !isNaN(parseInt(this.$route.query.contestId)) ? parseInt(this.$route.query.contestId) : 0
       // normal upload
       apiSubmit.submitLab({
         lab_id: this.id,
+        contest_id: contest_id,
         submit_data: this.code,
       }).then(response => {
         this.submitIds.push(response.data.data)
@@ -249,9 +251,10 @@ export default {
       setTimeout(() => (this[l] = false), 3000)
       this.loader = null
 
+      let contest_id = !isNaN(parseInt(this.$route.query.contestId)) ? parseInt(this.$route.query.contestId) : 0
       // upload
       apiSubmit.submitLabWithFile(this.formData, {
-        headers: {'Content-Type':'multipart/form-data', 'data':this.id,}
+        headers: {'Content-Type':'multipart/form-data', 'labId':this.id, 'contestId':contest_id,}
       }).then(response => {
         this.submitIds.push(response.data.data)
         this.submitSheet = true

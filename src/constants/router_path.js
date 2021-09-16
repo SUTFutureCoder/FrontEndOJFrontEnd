@@ -19,8 +19,20 @@ export const LAB_INFO = '/lab/info'
 // 比赛列表
 export const CONTEST_LIST = '/contest/list'
 
+// 比赛详情框架
+export const CONTEST_FRAME = '/contest/info'
+
 // 比赛详情
-export const CONTEST_INFO = '/contest/info'
+export const CONTEST_INFO = '/contest/router/info'
+
+//  比赛实验室详情
+export const CONTEST_LAB_INFO = '/contest/router/lab'
+
+// 比赛实验室列表
+export const CONTEST_LAB_LIST = '/contest/lab/list'
+
+// 比赛dashboard
+export const CONTEST_DASHBOARD = "/contest/dashboard"
 
 // 管理员功能
 // 添加实验室

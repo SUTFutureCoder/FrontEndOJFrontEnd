@@ -37,7 +37,7 @@
               <tr
                 v-for="(contest_lab, k) in contest_labs" :key="contest_lab.id"
               >
-                <td>{{ 1 + k }}</td>
+                <td>{{ String.fromCharCode(65 + k)}}</td>
                 <td>{{ contest_lab.id }}</td>
                 <td>{{ contest_lab.lab_name }}</td>
                 <td>
@@ -141,7 +141,10 @@ export default {
     this.contest_name = this.$route.query.contestName
     if (this.contest_id !== 0) {
       apiContest.getContestBind({contest_id: this.contest_id}).then((item) => {
-        console.log(item)
+        if (item.data.data.contest_labs == null) {
+          return
+        }
+        this.contest_labs = item.data.data.contest_labs
       }).catch()
     }
   },

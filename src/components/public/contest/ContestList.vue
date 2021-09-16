@@ -30,20 +30,35 @@
         @click:row="clickTableRow"
     >
       <template v-slot:item.actions="{ item }">
-        <v-container v-if="isInSigninTime(item)">
+        <v-container v-if="isInSigninTime(item) && !item.is_signed">
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
                   medium
                   class="mr-2"
-                  @click.stop="signinContest(item)"
+                  @click.stop="signinContest(item.contest_info.id)"
                   v-bind="attrs"
                   v-on="on"
               >
-                mdi-login
+                mdi-calendar-import
               </v-icon>
             </template>
             <span>报名</span>
+          </v-tooltip>
+        </v-container>
+        <v-container v-if="item.is_signed">
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                  medium
+                  class="mr-2"
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                mdi-calendar-check
+              </v-icon>
+            </template>
+            <span>已报名</span>
           </v-tooltip>
         </v-container>
         <v-container v-if="adminMode" >
@@ -249,11 +264,6 @@ export default {
       }
       apiContest.tryAccess(reqData).then(response => {
         if (response.data.data !== true) {
-          console.log(response)
-          store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
-            text: "请先报名比赛",
-            color: colors.RED,
-          })
           return
         }
         // 进行跳转
@@ -282,22 +292,61 @@ export default {
           return
         }
         this.contestList = response.data.data.contest_list
+        let contestIdList = []
+        for (let i in this.contestList) {
+          contestIdList.push(this.contestList[i].contest_info.id)
+        }
+        // 根据获取用户状态设置is_signed标记
+        apiContest.getContestsSignStatus({contest_ids: contestIdList}).then((response) => {
+          let signInContestSet = new Set()
+          for (let i in response.data.data.sign_in_contest_ids) {
+            signInContestSet.add(response.data.data.sign_in_contest_ids[i])
+          }
+
+          for (let i in this.contestList) {
+            let origin = this.contestList[i]
+            origin.is_signed = signInContestSet.has(this.contestList[i].contest_info.id)
+            this.$set(this.contestList, i, origin)
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+
         for (let i in this.contestList) {
           let summary = this.contestList[i].contest_submit_summary
           this.contestList[i].summary_str = summary.count_ac + "/" + summary.count_fail + "/" + summary.count_juding + "/" + summary.count_sum
           this.contestList[i].status_str = StatusMap.STATUSMAP.get(this.contestList[i].contest_info.status)
           this.contestList[i].contest_time_range = time_utils.convertMicroToDate(this.contestList[i].contest_info.contest_start_time) + "~" + time_utils.convertMicroToDate(this.contestList[i].contest_info.contest_end_time)
           this.contestList[i].contest_signin_time_range = time_utils.convertMicroToDate(this.contestList[i].contest_info.signup_start_time) + "~" + time_utils.convertMicroToDate(this.contestList[i].contest_info.signup_end_time)
+          this.contestList[i].is_signed = false
         }
         this.pageCount = Math.ceil(response.data.data.count / itemsPerPage)
+
       }).catch(err => {
         console.log(err)
       })
     },
-    signinContest(item) {
-      // 检查是否在报名时间之内
-
-      console.log(item);
+    signinContest(contestId) {
+      apiContest.getContestInfo({contest_id: contestId}).then((response) => {
+        if (response.data.data === true) {
+          store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+            text: "已成功报名",
+            color: colors.GREEN,
+          })
+          for (let i in this.contestList) {
+            if (contestId === this.contestList[i].contest_info.id) {
+              this.contestList[i].is_signed = true
+            }
+          }
+          return
+        }
+        store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
+          text: "报名失败，请重试",
+          color: colors.RED,
+        })
+      }).catch(err => {
+        console.log(err)
+      })
     },
     isInSigninTime(item) {
       let currentTime = new Date().getTime()
@@ -307,14 +356,17 @@ export default {
     },
    },
   props:{
+    // 编辑竞赛模式
     contestChooseMode: {
       type: Boolean,
       default: false,
     },
+    // 显示标题
     showTitle: {
       type: Boolean,
       default: true,
     },
+    // 是否跳转到竞赛
     jumpToContest: {
       type: Boolean,
       default: true,

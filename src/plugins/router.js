@@ -17,6 +17,9 @@ import UserList from "@/components/admin/UserList";
 import PutContest from "@/components/admin/PutContest";
 import ContestBind from "@/components/admin/ContestBind";
 import ContestList from "@/components/public/contest/ContestList";
+import ContestInfo from "@/components/contest/ContestInfo";
+import ContestLabInfo from "@/components/contest/ContestLabInfo";
+import ContestDashboard from "@/components/contest/ContestDashboard";
 
 
 Vue.use(VueRouter)
@@ -56,6 +59,18 @@ export const routerMap = {
     {
       path: RouterPath.CONTEST_LIST,
       component: ContestList,
+    },
+    {
+      path: RouterPath.CONTEST_INFO,
+      component: ContestInfo,
+    },
+    {
+      path: RouterPath.CONTEST_LAB_INFO,
+      component: ContestLabInfo,
+    },
+    {
+      path: RouterPath.CONTEST_DASHBOARD,
+      component: ContestDashboard,
     },
 
     // 管理员
