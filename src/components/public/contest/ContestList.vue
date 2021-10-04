@@ -327,7 +327,7 @@ export default {
       })
     },
     signinContest(contestId) {
-      apiContest.getContestInfo({contest_id: contestId}).then((response) => {
+      apiContest.sign({contest_id: contestId}).then((response) => {
         if (response.data.data === true) {
           store.dispatch(storeConst.DISPATCH_SNACKBAR_SHOW, {
             text: "已成功报名",
