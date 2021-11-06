@@ -1,7 +1,8 @@
 import * as Strategy from '@/pkg/strategy/strategy'
+import * as Config from '@/constants/config'
 
 export function InitWs(state) {
-  state.ws = new WebSocket('ws://localhost:8086/ws')
+  state.ws = new WebSocket(Config.WS_BACKEND)
   state.ws.onopen = () => {
     console.log('connection open')
   }

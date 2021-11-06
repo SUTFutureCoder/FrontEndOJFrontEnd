@@ -87,21 +87,21 @@ export default {
           uid: u,
           penal_time: 0,
         }
-        for (let cidk in this.contest_lab_ids) {
-          let cid = this.contest_lab_ids[cidk]
-          if (this.rank_data[u][cid] === undefined) {
-            this.rank_data[u][cid] = {
+        for (let lidk in this.contest_lab_ids) {
+          let lid = this.contest_lab_ids[lidk]
+          if (this.rank_data[u][lid] === undefined) {
+            this.rank_data[u][lid] = {
               is_ac: false,
               submit_times: 0,
               time_sum: 0,
               table_color: "",
             }
           }
-          if (this.rank_data[u][cid].is_ac) {
-            this.rank_data[u][cid].table_color = this.colors.GREEN
+          if (this.rank_data[u][lid].is_ac) {
+            this.rank_data[u][lid].table_color = this.colors.GREEN
             rank_penal_calc_tmp.penal_time += 1000000
           }
-          rank_penal_calc_tmp.penal_time -= this.rank_data[u][cid].time_sum
+          rank_penal_calc_tmp.penal_time -= this.rank_data[u][lid].time_sum
         }
         this.rank_penal_calc.push(rank_penal_calc_tmp)
       }

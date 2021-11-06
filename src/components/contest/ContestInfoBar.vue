@@ -12,11 +12,11 @@
             align="center"
             justify="space-around"
         >
-          <v-btn depressed v-if="contest_ac_lab_ids.length !== contest_lab_ids.length" @click="jumpToContest()">
-            AC {{contest_ac_lab_ids.length}} / {{contest_lab_ids.length}}
+          <v-btn depressed v-if="contest_ac_num !== contest_lab_ids.length" @click="jumpToContest()">
+            AC {{contest_ac_num}} / {{contest_lab_ids.length}}
           </v-btn>
-          <v-btn depressed :color="colors.RED" v-if="contest_lab_ids.length !== 0 && contest_ac_lab_ids.length === contest_lab_ids.length"  @click="jumpToContest()">
-            AK! Congrats! {{contest_ac_lab_ids.length}} / {{contest_lab_ids.length}}
+          <v-btn depressed :color="colors.GREEN" v-if="contest_ac_num !== 0 && contest_ac_num === contest_lab_ids.length"  @click="jumpToContest()">
+            AK! Congrats! {{contest_ac_num}} / {{contest_lab_ids.length}}
           </v-btn>
 
           <v-text-field
@@ -49,6 +49,7 @@ export default {
     left_contest_end_time: "",
     contest_lab_ids: [],
     contest_ac_lab_ids: [],
+    contest_ac_num: 0,
 
     colors: colors,
   }),
@@ -118,6 +119,7 @@ export default {
     apiContest.getUserContestAcLabids({contest_id: this.contest_id}).then((item) => {
       if (item.data.data.ac_lab_ids !== null) {
         this.contest_ac_lab_ids = item.data.data.ac_lab_ids
+        this.contest_ac_num = item.data.data.ac_num
         return
       }
       this.contest_ac_lab_ids = []

@@ -55,7 +55,7 @@ const errorHandle = (status, data) => {
 
 const request = (url, params) => {
   // 统一新增后端
-  return instance.post(config.BASE_BACKEND + url, params, {timeout:500,})
+  return instance.post(config.BASE_BACKEND + url, params, {timeout:5000,})
 }
 const requestNoTimeout = (url, params) => {
   // 统一新增后端
